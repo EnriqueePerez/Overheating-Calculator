@@ -1,14 +1,14 @@
 {
-  "name": "react-template-with-webpack",
+  "name": "overheating-calculator",
   "version": "1.0.0",
-  "description": "",
+  "description": "Overheating calculator for refrigeration units",
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack-dev-server --open --mode development"
   },
   "keywords": [],
-  "author": "",
+  "author": "EnriqueePerez",
   "license": "MIT",
   "dependencies": {
     "react": "^16.13.1",
