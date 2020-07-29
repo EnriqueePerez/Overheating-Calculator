@@ -1,0 +1,42 @@
+.main-container {
+  margin-top: 10em;
+}
+
+.login-title-container {
+  margin-bottom: 1.5em;
+  display: flex;
+
+  & h2 {
+    display: inline-block;
+    margin: 0 auto;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+
+  & input {
+    margin: 1em 0.5em 1em 0.5em;
+    width: 300px;
+    height: 25px;
+    align-self: center;
+    border: none;
+    background-color: #636363;
+
+    &::placeholder {
+      color: #c4c4c4;
+      padding-left: 0.5em;
+    }
+  }
+
+  & button {
+    margin: 1em 0.5em 1em 0.5em;
+    width: 100px;
+    height: 25px;
+    align-self: center;
+    border: none;
+    background-color: royalblue;
+  }
+}
