@@ -8,8 +8,10 @@ const Header = () => {
       <div className='logo-container'>
         <img src={logo} alt='Logo' />
       </div>
-      <div className='title-container'>
-        <h1>Sobrecalentamiento de unidades de refrigeración</h1>
+      <div>
+        <h1 className='title'>
+          Sobrecalentamiento de unidades de refrigeración
+        </h1>
       </div>
     </header>
   );
