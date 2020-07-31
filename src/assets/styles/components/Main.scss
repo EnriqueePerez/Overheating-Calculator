@@ -1,0 +1,81 @@
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  margin: 10px 0;
+  height: auto;
+  & h2 {
+    margin: 0;
+    text-align: center;
+  }
+  & p {
+    font-size: 1.2em;
+    margin: 0;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.field-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 20px 0px 20px 0;
+  align-self: center;
+
+  & h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  & input {
+    margin: 0 auto;
+    border: none;
+    border-radius: 2px;
+    height: 18px;
+    text-align: center;
+    &:focus {
+      outline: none;
+    }
+  }
+  & button {
+    width: 120px;
+    margin: 5px auto;
+    border: none;
+    height: 25px;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+}
+
+.calculator {
+  border-top: 1px inset gray;
+}
+
+.temperature-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  & h3 {
+    padding-left: 0.5em;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  & p {
+    padding-right: 3em;
+  }
+}
+
+.main-temperature-container {
+  margin-top: 2em;
+  text-align: center;
+  & p {
+    font-size: 1.5em;
+  }
+}

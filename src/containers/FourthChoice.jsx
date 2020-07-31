@@ -1,18 +1,18 @@
 import React from 'react';
 import '../assets/styles/components/Choices.scss';
 
-const FirstChoicing = () => {
+const FourthChoice = () => {
   return (
     <>
       <div className='title-container'>
-        <h1>¿Qué quieres hacer?</h1>
+        <h1>Tipo de Gas</h1>
       </div>
       <div className='buttons-container'>
-        <button type='submit'>Calcular y enviar datos</button>
-        <button type='submit'>Solo calcular datos</button>
+        <button type='submit'>R-22</button>
+        <button type='submit'>R-404a</button>
       </div>
     </>
   );
 };
 
-export default FirstChoicing;
+export default FourthChoice;
