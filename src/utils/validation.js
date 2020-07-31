@@ -20,12 +20,26 @@ export const validateStopPressureR404 = (e) => {
   return false;
 };
 
-export const validateOverheatingTemperature = (e) => {
-  if (e.target.value >= 12 && e.target.value <= 17) {
-    document.querySelector('#overheatingTemp').style.backgroundColor =
-      '#88fc88'; //green
-    // console.log('APROVADO');
-    return true;
+export const validateOverheatingTemperature = (overheatingTemp, unit) => {
+  switch (unit) {
+    case 'Conservacion':
+    case 'Cerveza': {
+      if (overheatingTemp > 12 && overheatingTemp < 17) {
+        document.getElementById('overheatingTemp').style.color = 'green';
+      }
+      if (overheatingTemp <= 12 || overheatingTemp >= 17) {
+        document.getElementById('overheatingTemp').style.color = 'red';
+      }
+      break;
+    }
+    case 'Hielo': {
+      if (overheatingTemp > 12 && overheatingTemp < 30) {
+        document.getElementById('overheatingTemp').style.color = 'green';
+      }
+      if (overheatingTemp <= 12 || overheatingTemp >= 30) {
+        document.getElementById('overheatingTemp').style.color = 'red';
+      }
+    }
   }
 };
 
@@ -56,6 +70,25 @@ export const calculation = (refrigerant, pressure, resistance) => {
       const A = 6.7577;
       const B = 740.39;
       const C = 231.86;
+
+      const psi = pressure;
+      const ohms = resistance;
+
+      const P = psi * 51.715 + 760; //converting psi to mmHg
+
+      const T = B / (A - Math.log10(P)) - C; //main operation
+
+      const saturationTemp = parseFloat(T.toFixed(2));
+      const tubeTemp = parseFloat(((ohms - 1000) / 3.9).toFixed(2));
+      const overheatTemp = parseFloat(
+        // eslint-disable-next-line comma-dangle
+        (parseFloat(tubeTemp) - parseFloat(saturationTemp)).toFixed(2)
+      );
+      const data = { saturationTemp, tubeTemp, overheatTemp };
+      return data;
+    }
+    default: {
+      return 0;
     }
   }
 };

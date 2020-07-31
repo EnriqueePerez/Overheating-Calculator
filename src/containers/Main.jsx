@@ -4,9 +4,14 @@ import {
   validateStopPressureR404,
   validateStartPressureR404,
   calculation,
+  validateOverheatingTemperature,
 } from '../utils/validation';
 
 const Main = (props) => {
+  const unit = 'Hielo';
+  const refrigerant = 'R22';
+  // /?unit=conservacion&refrigerant=R404a
+
   const [approved, setApproved] = useState(false);
   const [tubeTemperature, setTubeTemperature] = useState(0);
   const [saturationTemperature, setSaturationTemperature] = useState(0);
@@ -14,12 +19,7 @@ const Main = (props) => {
   const [form, setValues] = useState({});
 
   useEffect(() => {
-    if (overheatingTemperature > 12 && overheatingTemperature < 17) {
-      document.getElementById('overheatingTemp').style.color = 'green';
-    }
-    if (overheatingTemperature <= 12 || overheatingTemperature >= 17) {
-      document.getElementById('overheatingTemp').style.color = 'red';
-    }
+    validateOverheatingTemperature(overheatingTemperature, unit);
   });
 
   const handleInput = (e) => {
@@ -51,9 +51,6 @@ const Main = (props) => {
     }
   };
 
-  const unit = 'Conservación';
-  const refrigerant = 'R404a';
-  // /?unit=conservacion&refrigerant=R404a
   const calculate = () => {
     if (
       form.Presion_de_succion === undefined ||
