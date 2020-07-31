@@ -1,10 +1,10 @@
-export const validateCutPressureR404 = (e) => {
+export const validateStartPressureR404 = (e) => {
   if (e.target.value >= 63 && e.target.value <= 77) {
-    document.querySelector('#cutPressure').style.backgroundColor = '#88fc88'; //green
+    document.querySelector('#startPressure').style.backgroundColor = '#88fc88'; //green
     // console.log('APROVADO');
     return true;
   }
-  document.querySelector('#cutPressure').style.backgroundColor = '#fa6b6b'; //red
+  document.querySelector('#startPressure').style.backgroundColor = '#fa6b6b'; //red
   // console.log('RECHAZADO');
   return false;
 };
@@ -43,11 +43,12 @@ export const calculation = (refrigerant, pressure, resistance) => {
 
       const T = B / (A - Math.log10(P)) - C; //main operation
 
-      const saturationTemp = (T - 273.15).toFixed(2); //converting kelvin to celsius
-      const tubeTemp = ((ohms - 1000) / 3.9).toFixed(2);
-      const overheatTemp = (
-        parseFloat(tubeTemp) - parseFloat(saturationTemp)
-      ).toFixed(2);
+      const saturationTemp = parseFloat((T - 273.15).toFixed(2)); //converting kelvin to celsius
+      const tubeTemp = parseFloat(((ohms - 1000) / 3.9).toFixed(2));
+      const overheatTemp = parseFloat(
+        // eslint-disable-next-line comma-dangle
+        (parseFloat(tubeTemp) - parseFloat(saturationTemp)).toFixed(2)
+      );
       const data = { saturationTemp, tubeTemp, overheatTemp };
       return data;
     }
