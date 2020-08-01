@@ -1,23 +1,129 @@
-export const validateStartPressureR404 = (e) => {
-  if (e.target.value >= 63 && e.target.value <= 77) {
-    document.querySelector('#startPressure').style.backgroundColor = '#88fc88'; //green
-    // console.log('APROVADO');
-    return true;
+export const validateStartPressure = (e, refrigerant, unit) => {
+  switch (refrigerant) {
+    case 'R22': {
+      switch (unit) {
+        case 'Conservacion':
+        case 'Cerveza': {
+          if (e.target.value >= 54 && e.target.value <= 66) {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+          }
+          break;
+        }
+        case 'Hielo': {
+          if (e.target.value >= 31.5 && e.target.value <= 38.5) {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+            break;
+          }
+        }
+      }
+      break;
+    }
+    case 'R404a': {
+      switch (unit) {
+        case 'Conservacion':
+        case 'Cerveza': {
+          if (e.target.value >= 63 && e.target.value <= 77) {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+          }
+          break;
+        }
+        case 'Hielo': {
+          if (e.target.value >= 30.6 && e.target.value <= 37.4) {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#startPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+            break;
+          }
+        }
+      }
+    }
   }
-  document.querySelector('#startPressure').style.backgroundColor = '#fa6b6b'; //red
-  // console.log('RECHAZADO');
-  return false;
 };
 
-export const validateStopPressureR404 = (e) => {
-  if (e.target.value >= 36 && e.target.value <= 44) {
-    document.querySelector('#stopPressure').style.backgroundColor = '#88fc88'; //green
-    // console.log('APROVADO');
-    return true;
+export const validateStopPressure = (e, refrigerant, unit) => {
+  switch (refrigerant) {
+    case 'R22': {
+      switch (unit) {
+        case 'Conservacion':
+        case 'Cerveza': {
+          if (e.target.value >= 27 && e.target.value <= 33) {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+          }
+          break;
+        }
+        case 'Hielo': {
+          if (e.target.value >= 9 && e.target.value <= 11) {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+            break;
+          }
+        }
+      }
+      break;
+    }
+    case 'R404a': {
+      switch (unit) {
+        case 'Conservacion':
+        case 'Cerveza': {
+          if (e.target.value >= 36 && e.target.value <= 44) {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+          }
+          break;
+        }
+        case 'Hielo': {
+          if (e.target.value >= 15.3 && e.target.value <= 18.7) {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#stopPressure').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+            break;
+          }
+        }
+      }
+    }
   }
-  document.querySelector('#stopPressure').style.backgroundColor = '#fa6b6b'; //red
-  // console.log('RECHAZADO');
-  return false;
 };
 
 export const validateOverheatingTemperature = (overheatingTemp, unit) => {

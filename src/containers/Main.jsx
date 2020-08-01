@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/styles/components/Main.scss';
 import {
-  validateStopPressureR404,
-  validateStartPressureR404,
+  validateStopPressure,
+  validateStartPressure,
   calculation,
   validateOverheatingTemperature,
 } from '../utils/validation';
 
 const Main = (props) => {
-  const unit = 'Hielo';
+  const unit = 'Conservacion';
   const refrigerant = 'R22';
   // /?unit=conservacion&refrigerant=R404a
 
@@ -20,7 +20,7 @@ const Main = (props) => {
 
   useEffect(() => {
     validateOverheatingTemperature(overheatingTemperature, unit);
-  });
+  }, [overheatingTemperature]);
 
   const handleInput = (e) => {
     setValues({
@@ -30,25 +30,13 @@ const Main = (props) => {
   };
 
   const validationStartPressure = (e) => {
-    validateStartPressureR404(e);
-    if (validateStartPressureR404(e)) {
-      setApproved(true);
-      handleInput(e);
-    } else {
-      setApproved(false);
-      handleInput(e);
-    }
+    validateStartPressure(e, refrigerant, unit);
+    handleInput(e);
   };
 
   const validationStopPressure = (e) => {
-    validateStopPressureR404(e);
-    if (validateStopPressureR404(e)) {
-      setApproved(true);
-      handleInput(e);
-    } else {
-      setApproved(false);
-      handleInput(e);
-    }
+    validateStopPressure(e, refrigerant, unit);
+    handleInput(e);
   };
 
   const calculate = () => {
