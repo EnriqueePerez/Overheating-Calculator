@@ -12,7 +12,7 @@ const Main = (props) => {
   const refrigerant = 'R22';
   // /?unit=conservacion&refrigerant=R404a
 
-  const [approved, setApproved] = useState(false);
+  // const [approved, setApproved] = useState(false);
   const [tubeTemperature, setTubeTemperature] = useState(0);
   const [saturationTemperature, setSaturationTemperature] = useState(0);
   const [overheatingTemperature, setOverheatingTemperature] = useState(0);
@@ -125,7 +125,7 @@ const Main = (props) => {
             <button type='button' onClick={calculate}>
               Calcular
             </button>
-            <button
+            {/* <button
               type='submit'
               onClick={(e) => {
                 e.preventDefault();
@@ -133,7 +133,7 @@ const Main = (props) => {
               }}
             >
               Enviar
-            </button>
+            </button> */}
           </div>
           <div className='temperature-container'>
             <h3>Temperatura del tubo</h3>
