@@ -127,7 +127,7 @@ const Main = ({ match }) => {
             <button type='button' onClick={calculate}>
               Calcular
             </button>
-            <button
+            {/* <button
               type='submit'
               onClick={(e) => {
                 e.preventDefault();
@@ -135,7 +135,7 @@ const Main = ({ match }) => {
               }}
             >
               Enviar
-            </button>
+            </button> */}
           </div>
           <div className='temperature-container'>
             <h3>Temperatura del tubo</h3>

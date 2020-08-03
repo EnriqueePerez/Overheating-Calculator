@@ -16,9 +16,6 @@ const ThirdChoice = ({ match }) => {
         <Link to={`/refrigerant/${match.params.unit}/2`}>
           <button type='submit'>2</button>
         </Link>
-        <Link to={`/refrigerant/${match.params.unit}/3`}>
-          <button type='submit'>3</button>
-        </Link>
       </div>
     </>
   );

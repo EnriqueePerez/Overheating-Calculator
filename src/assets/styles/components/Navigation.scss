@@ -1,0 +1,26 @@
+.navigation-container {
+  display: flex;
+  align-items: center;
+  margin-left: 1em;
+  padding-top: 1em;
+  text-decoration: none;
+  color: white;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+p {
+  font-size: 1em;
+  margin: 0;
+}
+
+img {
+  width: 25px;
+  height: 25px;
+  margin-right: 0.5em;
+}
