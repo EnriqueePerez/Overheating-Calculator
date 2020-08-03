@@ -6,6 +6,7 @@ import {
   calculation,
   validateOverheatingTemperature,
 } from '../utils/validation';
+import Navigation from './Navigation';
 
 const Main = ({ match }) => {
   const [unit, setUnit] = useState('Sin Unidad');
@@ -77,6 +78,7 @@ const Main = ({ match }) => {
 
   return (
     <>
+      <Navigation />
       <header>
         <h2>Calculadora de sobrecalentamiento</h2>
         <p>{unit}</p>

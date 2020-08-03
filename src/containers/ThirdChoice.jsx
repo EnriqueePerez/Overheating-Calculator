@@ -1,11 +1,13 @@
 import React from 'react';
 import '../assets/styles/components/Choices.scss';
 import { Link } from 'react-router-dom';
+import Navigation from './Navigation';
 
 const FourthChoice = ({ match }) => {
   console.log(match);
   return (
     <>
+      <Navigation />
       <div className='title-container'>
         <h1>Tipo de Gas</h1>
       </div>
