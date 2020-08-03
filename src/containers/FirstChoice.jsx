@@ -1,18 +1,26 @@
 import React from 'react';
 import '../assets/styles/components/Choices.scss';
+import { Link } from 'react-router-dom';
 
-const FirstChoicing = () => {
+const SecondChoice = () => {
   return (
     <>
       <div className='title-container'>
-        <h1>¿Qué quieres hacer?</h1>
+        <h1>Tipo de Unidad</h1>
       </div>
       <div className='buttons-container'>
-        <button type='submit'>Calcular y enviar datos</button>
-        <button type='submit'>Solo calcular datos</button>
+        <Link to='/unitnumber/Conservacion'>
+          <button type='submit'>Conservación</button>
+        </Link>
+        <Link to='/refrigerant/Cerveza/1'>
+          <button type='submit'>Cerveza</button>
+        </Link>
+        <Link to='/refrigerant/Hielo/1'>
+          <button type='submit'>Hielo</button>
+        </Link>
       </div>
     </>
   );
 };
 
-export default FirstChoicing;
+export default SecondChoice;

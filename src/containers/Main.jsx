@@ -7,9 +7,9 @@ import {
   validateOverheatingTemperature,
 } from '../utils/validation';
 
-const Main = (props) => {
-  const unit = 'Conservacion';
-  const refrigerant = 'R22';
+const Main = ({ match }) => {
+  const [unit, setUnit] = useState('Sin Unidad');
+  const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
   // /?unit=conservacion&refrigerant=R404a
 
   // const [approved, setApproved] = useState(false);
@@ -20,6 +20,8 @@ const Main = (props) => {
 
   useEffect(() => {
     validateOverheatingTemperature(overheatingTemperature, unit);
+    setUnit(`${match.params.unit} ${match.params.unitnumber}`);
+    setRefrigerant(match.params.refrigerant);
   }, [overheatingTemperature]);
 
   const handleInput = (e) => {
@@ -125,7 +127,7 @@ const Main = (props) => {
             <button type='button' onClick={calculate}>
               Calcular
             </button>
-            {/* <button
+            <button
               type='submit'
               onClick={(e) => {
                 e.preventDefault();
@@ -133,7 +135,7 @@ const Main = (props) => {
               }}
             >
               Enviar
-            </button> */}
+            </button>
           </div>
           <div className='temperature-container'>
             <h3>Temperatura del tubo</h3>

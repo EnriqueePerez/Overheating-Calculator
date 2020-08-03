@@ -1,19 +1,26 @@
 import React from 'react';
 import '../assets/styles/components/Choices.scss';
+import { Link } from 'react-router-dom';
 
-const ThirdChoice = () => {
+const FourthChoice = ({ match }) => {
+  console.log(match);
   return (
     <>
       <div className='title-container'>
-        <h1>Número de unidad</h1>
+        <h1>Tipo de Gas</h1>
       </div>
       <div className='buttons-container'>
-        <button type='submit'>1</button>
-        <button type='submit'>2</button>
-        <button type='submit'>3</button>
+        <Link to={`/main/R22/${match.params.unit}/${match.params.unitnumber}`}>
+          <button type='submit'>R-22</button>
+        </Link>
+        <Link
+          to={`/main/R404a/${match.params.unit}/${match.params.unitnumber}`}
+        >
+          <button type='submit'>R404a</button>
+        </Link>
       </div>
     </>
   );
 };
 
-export default ThirdChoice;
+export default FourthChoice;
