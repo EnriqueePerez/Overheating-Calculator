@@ -21,7 +21,7 @@ const Main = ({ match }) => {
 
   useEffect(() => {
     validateOverheatingTemperature(overheatingTemperature, unit);
-    setUnit(`${match.params.unit} ${match.params.unitnumber}`);
+    setUnit(match.params.unit);
     setRefrigerant(match.params.refrigerant);
   }, [overheatingTemperature]);
 
@@ -70,7 +70,7 @@ const Main = ({ match }) => {
         Temperatura_de_Saturacion: operation.saturationTemp,
         Temperatura_del_Tubo: operation.tubeTemp,
         Temperatura_de_Sobrecalentamiento: operation.overheatTemp,
-        Unidad: unit,
+        Unidad: `${unit} ${match.params.unitnumber}`,
         Refrigerante: refrigerant,
       });
     }
@@ -81,7 +81,7 @@ const Main = ({ match }) => {
       <Navigation />
       <header>
         <h2>Calculadora de sobrecalentamiento</h2>
-        <p>{unit}</p>
+        <p>{`${unit} ${match.params.unitnumber}`}</p>
         <p>{refrigerant}</p>
       </header>
       <form>
