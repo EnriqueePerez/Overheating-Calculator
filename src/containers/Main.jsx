@@ -13,17 +13,38 @@ const Main = ({ match }) => {
   const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
   // /?unit=conservacion&refrigerant=R404a
 
-  // const [approved, setApproved] = useState(false);
   const [tubeTemperature, setTubeTemperature] = useState(0);
   const [saturationTemperature, setSaturationTemperature] = useState(0);
   const [overheatingTemperature, setOverheatingTemperature] = useState(0);
+  const [approved, setApproved] = useState(0);
   const [form, setValues] = useState({});
+
+  const generalValidation = () => {
+    if (
+      document.querySelector('#startPressure').style.backgroundColor ===
+        'rgb(136, 252, 136)' &&
+      document.querySelector('#stopPressure').style.backgroundColor ===
+        'rgb(136, 252, 136)' &&
+      document.getElementById('overheatingTemp').style.color === 'green'
+    ) {
+      setApproved(1);
+      console.log(approved);
+    } else {
+      setApproved(0);
+      console.log(approved);
+    }
+    setValues({
+      ...form,
+      Aprovado: approved,
+    });
+  };
 
   useEffect(() => {
     validateOverheatingTemperature(overheatingTemperature, unit);
     setUnit(match.params.unit);
     setRefrigerant(match.params.refrigerant);
-  }, [overheatingTemperature]);
+    generalValidation();
+  }, [approved, overheatingTemperature]);
 
   const handleInput = (e) => {
     setValues({
@@ -74,6 +95,19 @@ const Main = ({ match }) => {
         Refrigerante: refrigerant,
       });
     }
+  };
+
+  const sendData = (e) => {
+    // generalValidation();
+    e.preventDefault();
+    const data = JSON.stringify(form);
+    fetch('http://localhost:5000', {
+      method: 'POST',
+      body: data,
+      mode: 'no-cors',
+    })
+      .then((res) => console.log(res))
+      .catch((error) => console.error('Error:', error));
   };
 
   return (
@@ -129,15 +163,9 @@ const Main = ({ match }) => {
             <button type='button' onClick={calculate}>
               Calcular
             </button>
-            {/* <button
-              type='submit'
-              onClick={(e) => {
-                e.preventDefault();
-                console.log(form);
-              }}
-            >
+            <button type='submit' onClick={sendData}>
               Enviar
-            </button> */}
+            </button>
           </div>
           <div className='temperature-container'>
             <h3>Temperatura del tubo</h3>
