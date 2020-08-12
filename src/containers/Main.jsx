@@ -17,6 +17,7 @@ const Main = ({ match }) => {
   const [saturationTemperature, setSaturationTemperature] = useState(0);
   const [overheatingTemperature, setOverheatingTemperature] = useState(0);
   const [approved, setApproved] = useState(0);
+  const [readyToSend, setReadyToSend] = useState(false);
   const [form, setValues] = useState({});
 
   const generalValidation = () => {
@@ -35,7 +36,7 @@ const Main = ({ match }) => {
     }
     setValues({
       ...form,
-      Aprovado: approved,
+      Aprobado: approved,
     });
   };
 
@@ -44,13 +45,14 @@ const Main = ({ match }) => {
     setUnit(match.params.unit);
     setRefrigerant(match.params.refrigerant);
     generalValidation();
-  }, [approved, overheatingTemperature]);
+  }, [approved, overheatingTemperature, readyToSend]);
 
   const handleInput = (e) => {
     setValues({
       ...form,
       [e.target.name]: parseFloat(e.target.value),
     });
+    setReadyToSend(false);
   };
 
   const validationStartPressure = (e) => {
@@ -94,10 +96,12 @@ const Main = ({ match }) => {
         Unidad: `${unit} ${match.params.unitnumber}`,
         Refrigerante: refrigerant,
       });
+      setReadyToSend(true);
     }
   };
 
   const sendData = (e) => {
+    //When send, turn off button
     // generalValidation();
     e.preventDefault();
     const data = JSON.stringify(form);
@@ -108,6 +112,24 @@ const Main = ({ match }) => {
     })
       .then((res) => console.log(res))
       .catch((error) => console.error('Error:', error));
+    setReadyToSend(false);
+  };
+
+  const confirmSubmit = (e) => {
+    if (!approved) {
+      const agree = window.confirm(
+        // eslint-disable-next-line comma-dangle
+        'Estas enviando datos no aprobados. ¿Deseas continuar?'
+      );
+      agree ? sendData(e) : (alert('Datos no enviados'), e.preventDefault());
+    }
+    if (approved) {
+      const agree = window.confirm(
+        // eslint-disable-next-line comma-dangle
+        'Estas a punto de enviar datos. ¿Deseas continuar?'
+      );
+      agree ? sendData(e) : (alert('Datos no enviados'), e.preventDefault());
+    }
   };
 
   return (
@@ -130,7 +152,7 @@ const Main = ({ match }) => {
           />
         </div>
         <div className='field-container'>
-          <h3>Presión de corte del presostato</h3>
+          <h3>Presión de paro del presostato</h3>
           <input
             name='Presion_de_paro_del_presostato'
             id='stopPressure'
@@ -163,9 +185,15 @@ const Main = ({ match }) => {
             <button type='button' onClick={calculate}>
               Calcular
             </button>
-            <button type='submit' onClick={sendData}>
-              Enviar
-            </button>
+            {readyToSend ? (
+              <button type='submit' onClick={confirmSubmit}>
+                Enviar
+              </button>
+            ) : (
+              <p>
+                Se requiere calcular y validar los datos antes poder enviarlos
+              </p>
+            )}
           </div>
           <div className='temperature-container'>
             <h3>Temperatura del tubo</h3>
