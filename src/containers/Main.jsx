@@ -95,6 +95,7 @@ const Main = ({ match }) => {
         Temperatura_de_Sobrecalentamiento: operation.overheatTemp,
         Unidad: `${unit} ${match.params.unitnumber}`,
         Refrigerante: refrigerant,
+        Tienda: match.params.store,
       });
       setReadyToSend(true);
     }
@@ -139,6 +140,7 @@ const Main = ({ match }) => {
         <h2>Calculadora de sobrecalentamiento</h2>
         <p>{`${unit} ${match.params.unitnumber}`}</p>
         <p>{refrigerant}</p>
+        <p>{match.params.store}</p>
       </header>
       <form>
         <div className='field-container'>

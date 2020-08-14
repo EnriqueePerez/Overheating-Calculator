@@ -20,10 +20,14 @@ const App = () => (
       />
       <Route
         exact
-        path='/main/:refrigerant/:unit/:unitnumber'
+        path='/stores/:refrigerant/:unit/:unitnumber'
+        component={FourthChoice}
+      />
+      <Route
+        exact
+        path='/main/:refrigerant/:unit/:unitnumber/:store'
         component={Main}
       />
-      <Route exact path='/test' component={FourthChoice} />
     </Switch>
   </BrowserRouter>
 );

@@ -24,3 +24,39 @@
     }
   }
 }
+
+.dropdown-list {
+  margin-top: 10em;
+  & select {
+    height: 35px;
+    background-color: #a0a0a0;
+    border-radius: 5px;
+    font-size: 1.5em;
+    font-weight: bold;
+
+    text-align-last: center;
+    text-align: center;
+    -ms-text-align-last: center;
+    -moz-text-align-last: center;
+    &:focus {
+      outline: none;
+    }
+
+    & option {
+      background-color: #c0c0c0;
+    }
+  }
+}
+
+.continue-button {
+  margin-top: 3em;
+  height: 50px;
+  width: 150px;
+  border-radius: 5px;
+  font-size: 1.5em;
+  background-color: #c0c0c0;
+
+  &:focus {
+    outline: none;
+  }
+}
