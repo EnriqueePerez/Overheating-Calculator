@@ -108,7 +108,7 @@ const Main = ({ match }) => {
     fetch('http://localhost:5000', {
       method: 'POST',
       body: data,
-      mode: 'no-cors',
+      mode: 'cors',
     })
       .then((res) => console.log(res))
       .catch((error) => console.error('Error:', error));

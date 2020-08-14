@@ -5,6 +5,7 @@ import '../assets/styles/App.scss';
 import FirstChoice from '../containers/FirstChoice';
 import SecondChoice from '../containers/SecondChoice';
 import ThirdChoice from '../containers/ThirdChoice';
+import FourthChoice from '../containers/FourthChoice';
 import Main from '../containers/Main';
 
 const App = () => (
@@ -22,6 +23,7 @@ const App = () => (
         path='/main/:refrigerant/:unit/:unitnumber'
         component={Main}
       />
+      <Route exact path='/test' component={FourthChoice} />
     </Switch>
   </BrowserRouter>
 );
