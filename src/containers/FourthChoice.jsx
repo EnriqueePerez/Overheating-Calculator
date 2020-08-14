@@ -12,7 +12,7 @@ const FourthChoice = (props) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetch('http://192.168.0.6:5000/stores', {
+      const result = await fetch(`${process.env.SERVER_IP}/stores`, {
         method: 'GET',
         mode: 'cors',
       })

@@ -106,7 +106,7 @@ const Main = ({ match }) => {
     // generalValidation();
     e.preventDefault();
     const data = JSON.stringify(form);
-    fetch('http://localhost:5000', {
+    fetch(process.env.SERVER_IP, {
       method: 'POST',
       body: data,
       mode: 'cors',
