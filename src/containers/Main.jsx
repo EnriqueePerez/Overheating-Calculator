@@ -151,6 +151,7 @@ const Main = ({ match }) => {
             type='number'
             placeholder='PSI'
             onChange={validationStartPressure}
+            inputMode='decimal'
           />
         </div>
         <div className='field-container'>
@@ -161,6 +162,7 @@ const Main = ({ match }) => {
             type='number'
             placeholder='PSI'
             onChange={validationStopPressure}
+            inputMode='decimal'
           />
         </div>
 
@@ -172,6 +174,7 @@ const Main = ({ match }) => {
               type='number'
               placeholder='PSI'
               onChange={handleInput}
+              inputMode='decimal'
             />
           </div>
           <div className='field-container'>
@@ -181,6 +184,7 @@ const Main = ({ match }) => {
               type='number'
               placeholder='Ω'
               onChange={handleInput}
+              inputMode='decimal'
             />
           </div>
           <div className='field-container'>
