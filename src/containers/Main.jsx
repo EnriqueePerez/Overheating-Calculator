@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/styles/components/Main.scss';
+import Swal from 'sweetalert2';
 import {
   validateStopPressure,
   validateStartPressure,
@@ -74,9 +75,15 @@ const Main = ({ match }) => {
       form.presion_succion === undefined ||
       form.resistencia_pt1000 === undefined
     ) {
-      alert('Faltan campos por rellenar');
+      Swal.fire({
+        title: 'Faltan campos por rellenar',
+        icon: 'error',
+      });
     } else if (form.presion_succion === '' || form.resistencia_pt1000 === '') {
-      alert('Faltan campos por rellenar');
+      Swal.fire({
+        title: 'Faltan campos por rellenar',
+        icon: 'error',
+      });
     } else {
       const operation = calculation(
         refrigerant,
@@ -104,10 +111,44 @@ const Main = ({ match }) => {
     }
   };
 
+  const validatingResponse = (status) => {
+    if (status === 409) {
+      Swal.fire({
+        title: 'Datos repetidos',
+        text:
+          'Este dato ya ha sido introducido en la primera visita. ¿Deseas actualizar la primera revision o agregarlo a la segunda revision?',
+        icon: 'warning',
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonColor: '#3ed630',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Actualizar la primera revision',
+        cancelButtonText: 'Agregarlo como segunda revision',
+      }).then((result) => {
+        console.log(result);
+        if (result.value) {
+          console.log('enviado a primera revision');
+        } else if (result.dismiss === 'cancel') {
+          console.log('enviado a segunda revision');
+        } else if (result.dismiss === 'close') {
+          Swal.fire({
+            title: 'Datos no enviados',
+            icon: 'info',
+          });
+        }
+      });
+    } else if (status === 201) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Datos enviados',
+      });
+    }
+  };
+
   const sendData = (e) => {
     //When send, turn off button
     // generalValidation();
-    e.preventDefault();
+    // e.preventDefault();
     const data = JSON.stringify(form);
     console.log(data);
     fetch(`${process.env.SERVER_IP}/api/data`, {
@@ -119,26 +160,64 @@ const Main = ({ match }) => {
         'Content-Type': 'application/json',
       },
     })
-      .then((res) => console.log(res.status))
-      // .then((r) => console.log(r))
-      .catch((error) => console.error('Error:', error));
+      .then((res) => {
+        validatingResponse(res.status);
+      })
+      .catch((error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al enviar',
+          text: 'Hubo un error al enviar. Por favor, reporta el problema.',
+        });
+      });
     setReadyToSend(false);
   };
 
   const confirmSubmit = (e) => {
     if (!approved) {
-      const agree = window.confirm(
-        // eslint-disable-next-line comma-dangle
-        'Estas enviando datos no aprobados. ¿Deseas continuar?'
-      );
-      agree ? sendData(e) : (alert('Datos no enviados'), e.preventDefault());
+      e.preventDefault();
+      Swal.fire({
+        title: 'Estas enviando datos no aprobados',
+        text: '¿Deseas continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, envialos',
+        cancelButtonText: 'No enviar',
+      }).then((result) => {
+        if (result.value) {
+          sendData(e);
+        } else {
+          Swal.fire({
+            title: 'Datos no enviados',
+            icon: 'info',
+          });
+        }
+      });
     }
     if (approved) {
-      const agree = window.confirm(
-        // eslint-disable-next-line comma-dangle
-        'Estas a punto de enviar datos. ¿Deseas continuar?'
-      );
-      agree ? sendData(e) : (alert('Datos no enviados'), e.preventDefault());
+      e.preventDefault();
+      Swal.fire({
+        title: 'Estas a punto de enviar datos.',
+        text: '¿Deseas continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, envialos',
+        cancelButtonText: 'No enviar',
+      }).then((result) => {
+        if (result.value) {
+          sendData(e);
+        } else {
+          Swal.fire({
+            title: 'Datos no enviados',
+            icon: 'info',
+          });
+        }
+      });
     }
   };
 

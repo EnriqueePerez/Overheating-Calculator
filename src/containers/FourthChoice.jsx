@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 import Navigation from './Navigation';
 import '../assets/styles/components/Choices.scss';
 
@@ -30,6 +31,11 @@ const FourthChoice = (props) => {
             // eslint-disable-next-line comma-dangle
             'Hubo un error cargando las tiendas. Por favor, intenta mas tarde o reporta el problema'
           );
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al cargar las tiendas',
+            text: 'Por favor, intenta mas tarde o reporta el problema',
+          });
         });
       setStores(result);
     };
