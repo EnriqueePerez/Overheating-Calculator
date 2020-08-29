@@ -25,7 +25,7 @@ const App = () => (
       />
       <Route
         exact
-        path='/main/:refrigerant/:unit/:unitnumber/:store'
+        path='/main/:refrigerant/:unit/:unitnumber/:storecr/:store'
         component={Main}
       />
     </Switch>

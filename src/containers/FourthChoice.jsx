@@ -4,15 +4,16 @@ import '../assets/styles/components/Choices.scss';
 
 const FourthChoice = (props) => {
   const { match } = props;
-  console.log(match);
+  // console.log(match);
   const [stores, setStores] = useState([
     { CR: '', nombre: 'Cargando tiendas' },
   ]);
   const [selectedStore, setSelectedStore] = useState('Selecciona la tienda');
+  const [selectedStoreCR, setSelectedStoreCR] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetch(`${process.env.SERVER_IP}/stores`, {
+      const result = await fetch(`${process.env.SERVER_IP}/api/stores`, {
         method: 'GET',
         mode: 'cors',
       })
@@ -20,11 +21,15 @@ const FourthChoice = (props) => {
           return res.json();
         })
         .then((data) => {
-          //   console.log(data);
+          // console.log(data[0].nombre);
           return data;
         })
         .catch((err) => {
           console.log(err);
+          alert(
+            // eslint-disable-next-line comma-dangle
+            'Hubo un error cargando las tiendas. Por favor, intenta mas tarde o reporta el problema'
+          );
         });
       setStores(result);
     };
@@ -32,18 +37,23 @@ const FourthChoice = (props) => {
   }, []);
 
   const handleSelection = (e) => {
-    setSelectedStore(e.target.value);
+    const index = e.target.selectedIndex; //Getting the index of the selected element
+    const optionElement = e.target.childNodes[index]; //Getting the html line of the element;
+    const CR = optionElement.getAttribute('id'); //Getting the id attribute from the HTML line
+    const value = optionElement.getAttribute('value'); // Getting the value attribute from the HTML line
+    setSelectedStoreCR(CR);
+    setSelectedStore(value);
   };
 
   const redirectToMain = (e) => {
     if (selectedStore === 'Selecciona la tienda') {
       alert('Por favor, selecciona una tienda');
     } else {
-      console.log(selectedStore);
+      // console.log(selectedStore);
       e.preventDefault();
       props.history.push(
         // eslint-disable-next-line comma-dangle
-        `/main/${match.params.refrigerant}/${match.params.unit}/${match.params.unitnumber}/${selectedStore}`
+        `/main/${match.params.refrigerant}/${match.params.unit}/${match.params.unitnumber}/${selectedStoreCR}/${selectedStore}`
       );
     }
   };
@@ -56,7 +66,9 @@ const FourthChoice = (props) => {
           <select defaultValue={selectedStore} onChange={handleSelection}>
             <option>{selectedStore}</option>
             {stores.map((store) => (
-              <option key={store.CR}>{store.nombre}</option>
+              <option key={store.CR} id={store.CR} value={store.nombre}>
+                {store.nombre}
+              </option>
             ))}
           </select>
         </div>

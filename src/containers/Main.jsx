@@ -11,6 +11,8 @@ import Navigation from './Navigation';
 const Main = ({ match }) => {
   const [unit, setUnit] = useState('Sin Unidad');
   const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
+  const [store, setStore] = useState('Sin tienda');
+  const [storeCr, setStoreCr] = useState('');
   // /?unit=conservacion&refrigerant=R404a
 
   const [tubeTemperature, setTubeTemperature] = useState(0);
@@ -29,14 +31,14 @@ const Main = ({ match }) => {
       document.getElementById('overheatingTemp').style.color === 'green'
     ) {
       setApproved(1);
-      console.log(approved);
+      // console.log(approved);
     } else {
       setApproved(0);
-      console.log(approved);
+      // console.log(approved);
     }
     setValues({
       ...form,
-      Aprobado: approved,
+      aprobado: approved,
     });
   };
 
@@ -44,6 +46,8 @@ const Main = ({ match }) => {
     validateOverheatingTemperature(overheatingTemperature, unit);
     setUnit(match.params.unit);
     setRefrigerant(match.params.refrigerant);
+    setStoreCr(match.params.storecr);
+    setStore(match.params.store);
     generalValidation();
   }, [approved, overheatingTemperature, readyToSend]);
 
@@ -67,21 +71,18 @@ const Main = ({ match }) => {
 
   const calculate = () => {
     if (
-      form.Presion_de_succion === undefined ||
-      form.Resistencia_PT1000 === undefined
+      form.presion_succion === undefined ||
+      form.resistencia_pt1000 === undefined
     ) {
       alert('Faltan campos por rellenar');
-    } else if (
-      form.Presion_de_succion === '' ||
-      form.Resistencia_PT1000 === ''
-    ) {
+    } else if (form.presion_succion === '' || form.resistencia_pt1000 === '') {
       alert('Faltan campos por rellenar');
     } else {
       const operation = calculation(
         refrigerant,
-        form.Presion_de_succion,
+        form.presion_succion,
         // eslint-disable-next-line comma-dangle
-        form.Resistencia_PT1000
+        form.resistencia_pt1000
       );
       operation &&
         (setSaturationTemperature(operation.saturationTemp),
@@ -90,12 +91,14 @@ const Main = ({ match }) => {
 
       setValues({
         ...form,
-        Temperatura_de_Saturacion: operation.saturationTemp,
-        Temperatura_del_Tubo: operation.tubeTemp,
-        Temperatura_de_Sobrecalentamiento: operation.overheatTemp,
-        Unidad: `${unit} ${match.params.unitnumber}`,
-        Refrigerante: refrigerant,
-        Tienda: match.params.store,
+        temp_saturacion: operation.saturationTemp,
+        temp_tubo: operation.tubeTemp,
+        temp_sobrecalentamiento: operation.overheatTemp,
+        unidad: `${unit} ${match.params.unitnumber}`,
+        refrigerante: refrigerant,
+        CR: storeCr,
+        comentarios: 'Sin comentarios',
+        id_usuario: 9,
       });
       setReadyToSend(true);
     }
@@ -106,12 +109,18 @@ const Main = ({ match }) => {
     // generalValidation();
     e.preventDefault();
     const data = JSON.stringify(form);
-    fetch(process.env.SERVER_IP, {
+    console.log(data);
+    fetch(`${process.env.SERVER_IP}/api/data`, {
       method: 'POST',
       body: data,
       mode: 'cors',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
     })
-      .then((res) => console.log(res))
+      .then((res) => console.log(res.status))
+      // .then((r) => console.log(r))
       .catch((error) => console.error('Error:', error));
     setReadyToSend(false);
   };
@@ -140,13 +149,13 @@ const Main = ({ match }) => {
         <h2>Calculadora de sobrecalentamiento</h2>
         <p>{`${unit} ${match.params.unitnumber}`}</p>
         <p>{refrigerant}</p>
-        <p>{match.params.store}</p>
+        <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>
       <form>
         <div className='field-container'>
           <h3>Presión de arranque del presostato</h3>
           <input
-            name='Presion_de_arranque_del_presostato'
+            name='presion_arranque'
             id='startPressure'
             type='number'
             placeholder='PSI'
@@ -157,7 +166,7 @@ const Main = ({ match }) => {
         <div className='field-container'>
           <h3>Presión de paro del presostato</h3>
           <input
-            name='Presion_de_paro_del_presostato'
+            name='presion_paro'
             id='stopPressure'
             type='number'
             placeholder='PSI'
@@ -170,7 +179,7 @@ const Main = ({ match }) => {
           <div className='field-container'>
             <h3>Presión de succión</h3>
             <input
-              name='Presion_de_succion'
+              name='presion_succion'
               type='number'
               placeholder='PSI'
               onChange={handleInput}
@@ -180,7 +189,7 @@ const Main = ({ match }) => {
           <div className='field-container'>
             <h3>Resistencia PT1000</h3>
             <input
-              name='Resistencia_PT1000'
+              name='resistencia_pt1000'
               type='number'
               placeholder='Ω'
               onChange={handleInput}
@@ -197,7 +206,8 @@ const Main = ({ match }) => {
               </button>
             ) : (
               <p>
-                Se requiere calcular y validar los datos antes poder enviarlos
+                Se requiere calcular y validar los datos antes de poder
+                enviarlos
               </p>
             )}
           </div>
