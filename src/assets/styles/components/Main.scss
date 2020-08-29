@@ -62,6 +62,14 @@ form {
   border-top: 1px inset gray;
 }
 
+.comments {
+  display: flex;
+  align-self: center;
+  width: 50%;
+  outline: none;
+  border-radius: 5px;
+}
+
 .temperature-container {
   display: flex;
   align-items: center;

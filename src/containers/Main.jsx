@@ -21,7 +21,7 @@ const Main = ({ match }) => {
   const [overheatingTemperature, setOverheatingTemperature] = useState(0);
   const [approved, setApproved] = useState(0);
   const [readyToSend, setReadyToSend] = useState(false);
-  const [form, setValues] = useState({});
+  const [form, setValues] = useState({ comentarios: 'Sin comentarios' });
 
   const generalValidation = () => {
     if (
@@ -55,7 +55,7 @@ const Main = ({ match }) => {
   const handleInput = (e) => {
     setValues({
       ...form,
-      [e.target.name]: parseFloat(e.target.value),
+      [e.target.name]: e.target.value,
     });
     setReadyToSend(false);
   };
@@ -104,7 +104,6 @@ const Main = ({ match }) => {
         unidad: `${unit} ${match.params.unitnumber}`,
         refrigerante: refrigerant,
         CR: storeCr,
-        comentarios: 'Sin comentarios',
         id_usuario: 9,
       });
       setReadyToSend(true);
@@ -149,6 +148,7 @@ const Main = ({ match }) => {
     //When send, turn off button
     // generalValidation();
     // e.preventDefault();
+    console.log(form);
     const data = JSON.stringify(form);
     console.log(data);
     fetch(`${process.env.SERVER_IP}/api/data`, {
@@ -273,6 +273,14 @@ const Main = ({ match }) => {
               placeholder='Ω'
               onChange={handleInput}
               inputMode='decimal'
+            />
+          </div>
+          <div className='field-container'>
+            <h3>Comentarios (opcional)</h3>
+            <textarea
+              name='comentarios'
+              className='comments'
+              onChange={handleInput}
             />
           </div>
           <div className='field-container'>
