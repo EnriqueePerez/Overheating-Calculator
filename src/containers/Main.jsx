@@ -10,6 +10,7 @@ import {
 import Navigation from './Navigation';
 
 const Main = ({ match }) => {
+  const [user, setUser] = useState(9);
   const [unit, setUnit] = useState('Sin Unidad');
   const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
   const [store, setStore] = useState('Sin tienda');
@@ -104,7 +105,7 @@ const Main = ({ match }) => {
         unidad: `${unit} ${match.params.unitnumber}`,
         refrigerante: refrigerant,
         CR: storeCr,
-        id_usuario: 9,
+        id_usuario: user,
       });
       setReadyToSend(true);
     }
@@ -221,6 +222,14 @@ const Main = ({ match }) => {
     }
   };
 
+  const handleUserInput = (e) => {
+    const index = e.target.selectedIndex; //Getting the index of the selected element
+    const optionElement = e.target.childNodes[index]; //Getting the html line of the element;
+    const id = optionElement.getAttribute('id'); //Getting the id attribute from the HTML line
+    // console.log(id);
+    setUser(id);
+  };
+
   return (
     <>
       <Navigation />
@@ -231,6 +240,40 @@ const Main = ({ match }) => {
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>
       <form>
+        <div className='field-container'>
+          <h3>Usuario</h3>
+          <div className='user-dropdown'>
+            <select onChange={handleUserInput}>
+              <option id='9' value='Admin'>
+                Seleccionar usuario
+              </option>
+              <option id='1' value='Mario Enrique'>
+                Mario Enrique
+              </option>
+              <option id='2' value='Alberto Zaid'>
+                Alberto Zaid
+              </option>
+              <option id='3' value='Juan Carlos'>
+                Juan Carlos
+              </option>
+              <option id='4' value='Jesus'>
+                Jesus
+              </option>
+              <option id='5' value='Elias'>
+                Elias
+              </option>
+              <option id='6' value='Alexis'>
+                Alexis
+              </option>
+              <option id='7' value='José Abraham'>
+                José Abraham
+              </option>
+              <option id='8' value='Francisco'>
+                Francisco
+              </option>
+            </select>
+          </div>
+        </div>
         <div className='field-container'>
           <h3>Presión de arranque del presostato</h3>
           <input

@@ -93,3 +93,12 @@ form {
     font-size: 1.5em;
   }
 }
+
+.user-dropdown {
+  margin: auto;
+  & select {
+    height: 20px;
+    width: 173px;
+    border-radius: 2px;
+  }
+}
