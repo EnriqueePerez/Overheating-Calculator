@@ -125,11 +125,118 @@ const Main = ({ match }) => {
         confirmButtonText: 'Actualizar la primera revision',
         cancelButtonText: 'Agregarlo como segunda revision',
       }).then((result) => {
-        console.log(result);
+        // console.log(result);
         if (result.value) {
-          console.log('enviado a primera revision');
+          //actualizar data
+          fetch(`${process.env.SERVER_IP}/api/data`, {
+            method: 'PUT',
+            body: JSON.stringify(form),
+            mode: 'cors',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((res) => {
+              if (res.status === 202) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Datos de la primera revision actualizados',
+                });
+              } else if (status === 500) {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error al enviar',
+                  text:
+                    'Hubo un error al enviar. Por favor, reporta el problema.',
+                });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al enviar',
+                text:
+                  'Hubo un error al enviar. Por favor, reporta el problema.',
+              });
+            });
         } else if (result.dismiss === 'cancel') {
-          console.log('enviado a segunda revision');
+          //introducir en dataSecondary
+          fetch(`${process.env.SERVER_IP}/api/data/secondary`, {
+            method: 'POST',
+            body: JSON.stringify(form),
+            mode: 'cors',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((res) => {
+              if (res.status === 201) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Datos de la segunda revision enviados',
+                });
+              } else if (res.status === 409) {
+                Swal.fire({
+                  title: 'Datos repetidos',
+                  text:
+                    'Este dato ya ha sido introducido en la segunda revision. ¿Deseas actualizar la segunda revision?',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3ed630',
+                  cancelButtonColor: '#3085d6',
+                  confirmButtonText: 'Actualizar la segunda revision',
+                  cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                  if (result.value) {
+                    fetch(`${process.env.SERVER_IP}/api/data/secondary`, {
+                      method: 'PUT',
+                      body: JSON.stringify(form),
+                      mode: 'cors',
+                      headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                      },
+                    })
+                      .then((res) => {
+                        if (res.status === 202) {
+                          Swal.fire({
+                            icon: 'success',
+                            title: 'Datos de la segunda revision actualizados',
+                          });
+                        }
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Error al enviar',
+                          text:
+                            'Hubo un error al enviar. Por favor, reporta el problema.',
+                        });
+                      });
+                  }
+                });
+              } else if (res.status === 500) {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error al enviar',
+                  text:
+                    'Hubo un error al enviar. Por favor, reporta el problema.',
+                });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al enviar',
+                text:
+                  'Hubo un error al enviar. Por favor, reporta el problema.',
+              });
+            });
         } else if (result.dismiss === 'close') {
           Swal.fire({
             title: 'Datos no enviados',
@@ -142,6 +249,12 @@ const Main = ({ match }) => {
         icon: 'success',
         title: 'Datos enviados',
       });
+    } else if (status === 500) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al enviar',
+        text: 'Hubo un error al enviar. Por favor, reporta el problema.',
+      });
     }
   };
 
@@ -150,11 +263,9 @@ const Main = ({ match }) => {
     // generalValidation();
     // e.preventDefault();
     console.log(form);
-    const data = JSON.stringify(form);
-    console.log(data);
     fetch(`${process.env.SERVER_IP}/api/data`, {
       method: 'POST',
-      body: data,
+      body: JSON.stringify(form),
       mode: 'cors',
       headers: {
         Accept: 'application/json',
