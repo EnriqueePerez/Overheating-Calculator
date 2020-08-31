@@ -4,6 +4,7 @@ import Navigation from './Navigation';
 import '../assets/styles/components/Choices.scss';
 
 const FourthChoice = (props) => {
+  console.log(process.env.SERVER_IP);
   const { match } = props;
   // console.log(match);
   const [stores, setStores] = useState([
