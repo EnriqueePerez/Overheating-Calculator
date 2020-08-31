@@ -63,10 +63,5 @@ module.exports = {
       filename: 'assets/[name].css',
     }),
     new Dotenv(),
-    new webpack.DefinePlugin({
-      'process.env': {
-        SERVER_IP: 'https://overheating-calculator-back.herokuapp.com',
-      },
-    }),
   ],
 };
