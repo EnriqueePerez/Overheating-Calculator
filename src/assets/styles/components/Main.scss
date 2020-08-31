@@ -53,10 +53,21 @@ form {
     font-size: 1em;
     background-color: white;
   }
+  & p {
+    text-align: center;
+  }
 }
 
 .calculator {
   border-top: 1px inset gray;
+}
+
+.comments {
+  display: flex;
+  align-self: center;
+  width: 50%;
+  outline: none;
+  border-radius: 5px;
 }
 
 .temperature-container {
@@ -77,7 +88,17 @@ form {
 .main-temperature-container {
   margin-top: 2em;
   text-align: center;
+  margin-bottom: 2em;
   & p {
     font-size: 1.5em;
+  }
+}
+
+.user-dropdown {
+  margin: auto;
+  & select {
+    height: 20px;
+    width: 173px;
+    border-radius: 2px;
   }
 }

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 
 const FourthChoice = ({ match }) => {
-  console.log(match);
+  // console.log(match);
   return (
     <>
       <Navigation />
@@ -12,11 +12,13 @@ const FourthChoice = ({ match }) => {
         <h1>Tipo de Gas</h1>
       </div>
       <div className='buttons-container'>
-        <Link to={`/main/R22/${match.params.unit}/${match.params.unitnumber}`}>
+        <Link
+          to={`/stores/R22/${match.params.unit}/${match.params.unitnumber}`}
+        >
           <button type='submit'>R-22</button>
         </Link>
         <Link
-          to={`/main/R404a/${match.params.unit}/${match.params.unitnumber}`}
+          to={`/stores/R404a/${match.params.unit}/${match.params.unitnumber}`}
         >
           <button type='submit'>R404a</button>
         </Link>

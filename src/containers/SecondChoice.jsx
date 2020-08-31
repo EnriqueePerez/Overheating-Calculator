@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 
 const ThirdChoice = ({ match }) => {
-  console.log(match);
+  // console.log(match);
   return (
     <>
       <Navigation />
