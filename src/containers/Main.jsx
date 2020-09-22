@@ -24,18 +24,18 @@ const Main = ({ match }) => {
   const [readyToSend, setReadyToSend] = useState(false);
   const [form, setValues] = useState({
     comentarios: 'Sin comentarios',
-    aprobado,
-    presion_arranque,
-    presion_paro,
-    presion_succion,
-    resistencia_pt1000,
-    temp_saturacion,
-    temp_tubo,
-    temp_sobrecalentamiento,
-    unidad,
-    refrigerante,
-    CR,
-    id_usuario,
+    aprobado: 0,
+    presion_arranque: 0,
+    presion_paro: 0,
+    presion_succion: 0,
+    resistencia_pt1000: 0,
+    temp_saturacion: 0,
+    temp_tubo: 0,
+    temp_sobrecalentamiento: '',
+    unidad: 'Sin unidad',
+    refrigerante: 'Sin refrigerante',
+    CR: 'AAA',
+    id_usuario: '9',
   });
 
   const generalValidation = () => {
