@@ -22,7 +22,21 @@ const Main = ({ match }) => {
   const [overheatingTemperature, setOverheatingTemperature] = useState(0);
   const [approved, setApproved] = useState(0);
   const [readyToSend, setReadyToSend] = useState(false);
-  const [form, setValues] = useState({ comentarios: 'Sin comentarios' });
+  const [form, setValues] = useState({
+    comentarios: 'Sin comentarios',
+    aprobado,
+    presion_arranque,
+    presion_paro,
+    presion_succion,
+    resistencia_pt1000,
+    temp_saturacion,
+    temp_tubo,
+    temp_sobrecalentamiento,
+    unidad,
+    refrigerante,
+    CR,
+    id_usuario,
+  });
 
   const generalValidation = () => {
     if (
