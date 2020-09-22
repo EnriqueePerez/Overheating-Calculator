@@ -27,8 +27,8 @@ const Main = ({ match }) => {
     aprobado: 0,
     presion_arranque: 0,
     presion_paro: 0,
-    presion_succion: 0,
-    resistencia_pt1000: 0,
+    presion_succion: undefined,
+    resistencia_pt1000: undefined,
     temp_saturacion: 0,
     temp_tubo: 0,
     temp_sobrecalentamiento: '',
@@ -125,6 +125,25 @@ const Main = ({ match }) => {
     }
   };
 
+  const formattingForm = (form) => {
+    const formattedForm = {
+      comentarios: form.comentarios,
+      aprobado: form.aprobado,
+      presion_arranque: form.presion_arranque,
+      presion_paro: form.presion_paro,
+      presion_succion: form.presion_succion,
+      resistencia_pt1000: form.resistencia_pt1000,
+      temp_saturacion: form.temp_saturacion,
+      temp_tubo: form.temp_tubo,
+      temp_sobrecalentamiento: form.temp_sobrecalentamiento,
+      unidad: form.unidad,
+      refrigerante: form.refrigerante,
+      CR: form.CR,
+      id_usuario: form.id_usuario,
+    };
+    return formattedForm;
+  };
+
   const validatingResponse = (status) => {
     if (status === 409) {
       Swal.fire({
@@ -142,9 +161,10 @@ const Main = ({ match }) => {
         // console.log(result);
         if (result.value) {
           //actualizar data
+          const data = formattingForm(form);
           fetch(`${process.env.SERVER_IP}/api/data`, {
             method: 'PUT',
-            body: JSON.stringify(form),
+            body: JSON.stringify(data),
             mode: 'cors',
             headers: {
               Accept: 'application/json',
@@ -177,9 +197,10 @@ const Main = ({ match }) => {
             });
         } else if (result.dismiss === 'cancel') {
           //introducir en dataSecondary
+          const data = formattingForm(form);
           fetch(`${process.env.SERVER_IP}/api/data/secondary`, {
             method: 'POST',
-            body: JSON.stringify(form),
+            body: JSON.stringify(data),
             mode: 'cors',
             headers: {
               Accept: 'application/json',
@@ -277,10 +298,11 @@ const Main = ({ match }) => {
     //When send, turn off button
     // generalValidation();
     // e.preventDefault();
-    console.log(form);
+    const data = formattingForm(form);
+    // alert(JSON.stringify(formattedForm));
     fetch(`${process.env.SERVER_IP}/api/data`, {
       method: 'POST',
-      body: JSON.stringify(form),
+      body: JSON.stringify(data),
       mode: 'cors',
       headers: {
         Accept: 'application/json',
@@ -295,7 +317,7 @@ const Main = ({ match }) => {
         Swal.fire({
           icon: 'error',
           title: 'Error al enviar',
-          text: error,
+          text: 'Hubo un error al enviar. Por favor, reporta el problema.',
         });
       });
     setReadyToSend(false);
