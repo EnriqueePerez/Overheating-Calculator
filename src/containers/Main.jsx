@@ -280,7 +280,7 @@ const Main = ({ match }) => {
         Swal.fire({
           icon: 'error',
           title: 'Error al enviar',
-          text: 'Hubo un error al enviar. Por favor, reporta el problema.',
+          text: error,
         });
       });
     setReadyToSend(false);
