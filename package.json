@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
-    "start": "webpack-dev-server --open --mode development --host 192.168.0.12"
+    "start": "webpack-dev-server --open --mode development"
   },
   "keywords": [],
   "author": "EnriqueePerez",

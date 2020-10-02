@@ -35,7 +35,7 @@ const Main = ({ match }) => {
     unidad: 'Sin unidad',
     refrigerante: 'Sin refrigerante',
     CR: 'AAA',
-    id_usuario: '9',
+    id_usuario: 9,
   });
 
   const generalValidation = () => {
@@ -88,13 +88,18 @@ const Main = ({ match }) => {
   const calculate = () => {
     if (
       form.presion_succion === undefined ||
-      form.resistencia_pt1000 === undefined
+      form.resistencia_pt1000 === undefined ||
+      user === 9
     ) {
       Swal.fire({
         title: 'Faltan campos por rellenar',
         icon: 'error',
       });
-    } else if (form.presion_succion === '' || form.resistencia_pt1000 === '') {
+    } else if (
+      form.presion_succion === '' ||
+      form.resistencia_pt1000 === '' ||
+      user === 9
+    ) {
       Swal.fire({
         title: 'Faltan campos por rellenar',
         icon: 'error',
