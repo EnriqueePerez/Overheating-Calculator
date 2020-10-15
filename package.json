@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
-    "start": "nodemon src/server/index"
+    "start": "nodemon src/server/config/index"
   },
   "keywords": [],
   "author": "EnriqueePerez",
@@ -14,9 +14,13 @@
     "@babel/register": "^7.12.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "history": "^5.0.0",
+    "ignore-styles": "^5.0.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-hot-loader": "^4.13.0",
+    "react-router": "^5.2.0",
+    "react-router-config": "^5.1.1",
     "react-router-dom": "^5.2.0",
     "sweetalert2": "^9.17.2",
     "webpack-dev-middleware": "^3.7.2",
