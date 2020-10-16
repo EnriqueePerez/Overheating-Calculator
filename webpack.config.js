@@ -3,15 +3,23 @@ const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+require('dotenv').config();
+
+const isDev = process.env.ENV === 'development';
+const entry = ['./src/frontend/index.js', '@babel/polyfill'];
+
+if (isDev) {
+  entry.push(
+    // eslint-disable-next-line comma-dangle
+    'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true'
+  );
+}
+
 module.exports = {
-  entry: [
-    '@babel/polyfill',
-    './src/frontend/index.js',
-    'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
-  ],
+  entry,
   mode: 'development',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'src/server/public'),
     filename: 'assets/app.js',
     publicPath: '/',
   },
@@ -60,7 +68,7 @@ module.exports = {
     historyApiFallback: true,
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+    isDev ? new webpack.HotModuleReplacementPlugin() : () => {},
     new MiniCssExtractPlugin({
       filename: 'assets/app.css',
     }),
