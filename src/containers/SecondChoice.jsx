@@ -3,7 +3,7 @@ import '../assets/styles/components/Choices.scss';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 
-const ThirdChoice = ({ match }) => {
+const SecondChoice = ({ match }) => {
   // console.log(match);
   return (
     <>
@@ -23,4 +23,4 @@ const ThirdChoice = ({ match }) => {
   );
 };
 
-export default ThirdChoice;
+export default SecondChoice;

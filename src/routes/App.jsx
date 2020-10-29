@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import '../assets/styles/App.scss';
-// import Login from '../containers/Login';
+import Login from '../containers/Login';
 import FirstChoice from '../containers/FirstChoice';
 import SecondChoice from '../containers/SecondChoice';
 import ThirdChoice from '../containers/ThirdChoice';
@@ -28,6 +28,7 @@ const App = () => (
         path='/main/:refrigerant/:unit/:unitnumber/:storecr/:store'
         component={Main}
       />
+      <Route exact path='/login' component={Login} />
     </Switch>
   </BrowserRouter>
 );
