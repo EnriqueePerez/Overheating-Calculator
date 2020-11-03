@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../assets/styles/components/Choices.scss';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 
 const SecondChoice = ({ match }) => {
   // console.log(match);
+  useEffect(() => {
+    const checkAuth = async () => {
+      await axios({
+        url: `${process.env.SERVER_IP}/auth/verify`,
+        method: 'POST',
+        withCredentials: true,
+      })
+        .then((r) => {
+          if (r.status === 202) {
+            console.log('aprobado');
+          }
+        })
+        .catch((e) => {
+          props.history.push('/login');
+        });
+    };
+    checkAuth();
+  }, []);
   return (
     <>
       <Navigation />

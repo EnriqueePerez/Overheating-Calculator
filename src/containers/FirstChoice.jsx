@@ -21,7 +21,7 @@ const FirstChoice = (props) => {
         });
     };
     checkAuth();
-  });
+  }, []);
 
   return (
     <>

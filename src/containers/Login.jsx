@@ -33,13 +33,21 @@ const Login = () => {
       });
   };
 
-  // const checkAuth = async () => {
-  //   const data = await axios({
-  //     url: `${process.env.SERVER_IP}/auth/check`,
-  //     method: 'GET',
-  //     withCredentials: 'true',
-  //   }).then((r) => console.log(r));
-  // };
+  const checkAuth = async () => {
+    await axios({
+      url: `${process.env.SERVER_IP}/auth/verify`,
+      method: 'POST',
+      withCredentials: true,
+    })
+      .then((r) => {
+        if (r.status === 200) {
+          console.log('aprobado');
+        }
+      })
+      .catch((e) => {
+        props.history.push('/login');
+      });
+  };
 
   const handleInput = (e) => {
     setValues({

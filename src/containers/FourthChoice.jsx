@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Swal from 'sweetalert2';
 import Navigation from './Navigation';
 import '../assets/styles/components/Choices.scss';
@@ -13,6 +14,21 @@ const FourthChoice = (props) => {
   const [selectedStoreCR, setSelectedStoreCR] = useState('');
 
   useEffect(() => {
+    const checkAuth = async () => {
+      await axios({
+        url: `${process.env.SERVER_IP}/auth/verify`,
+        method: 'POST',
+        withCredentials: true,
+      })
+        .then((r) => {
+          if (r.status === 202) {
+            console.log('aprobado');
+          }
+        })
+        .catch((e) => {
+          props.history.push('/login');
+        });
+    };
     const fetchData = async () => {
       const result = await fetch(`${process.env.SERVER_IP}/api/stores`, {
         method: 'GET',
@@ -39,6 +55,7 @@ const FourthChoice = (props) => {
         });
       setStores(result);
     };
+    checkAuth();
     fetchData();
   }, []);
 

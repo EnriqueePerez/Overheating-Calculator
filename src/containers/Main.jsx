@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../assets/styles/components/Main.scss';
 import Swal from 'sweetalert2';
 import {
@@ -38,6 +39,22 @@ const Main = ({ match }) => {
     id_usuario: 9,
   });
 
+  const checkAuth = async () => {
+    await axios({
+      url: `${process.env.SERVER_IP}/auth/verify`,
+      method: 'POST',
+      withCredentials: true,
+    })
+      .then((r) => {
+        if (r.status === 202) {
+          console.log('aprobado');
+        }
+      })
+      .catch((e) => {
+        props.history.push('/login');
+      });
+  };
+
   const generalValidation = () => {
     if (
       document.querySelector('#startPressure').style.backgroundColor ===
@@ -59,6 +76,7 @@ const Main = ({ match }) => {
   };
 
   useEffect(() => {
+    checkAuth();
     validateOverheatingTemperature(overheatingTemperature, unit);
     setUnit(match.params.unit);
     setRefrigerant(match.params.refrigerant);
