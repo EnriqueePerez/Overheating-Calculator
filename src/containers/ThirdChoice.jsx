@@ -4,7 +4,7 @@ import '../assets/styles/components/Choices.scss';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 
-const ThirdChoice = ({ match }) => {
+const ThirdChoice = ({ match, history }) => {
   // console.log(match);
   useEffect(() => {
     const checkAuth = async () => {
@@ -19,7 +19,7 @@ const ThirdChoice = ({ match }) => {
           }
         })
         .catch((e) => {
-          props.history.push('/login');
+          history.push('/login');
         });
     };
     checkAuth();

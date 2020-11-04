@@ -10,7 +10,7 @@ import {
 } from '../utils/validation';
 import Navigation from './Navigation';
 
-const Main = ({ match }) => {
+const Main = ({ match, history }) => {
   const [user, setUser] = useState(9);
   const [unit, setUnit] = useState('Sin Unidad');
   const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
@@ -47,11 +47,13 @@ const Main = ({ match }) => {
     })
       .then((r) => {
         if (r.status === 202) {
-          console.log('aprobado');
+          // useUserUpdate(r.data.user.name);
+          console.log(r.data);
+          // console.log('aprobado');
         }
       })
       .catch((e) => {
-        props.history.push('/login');
+        history.push('/login');
       });
   };
 

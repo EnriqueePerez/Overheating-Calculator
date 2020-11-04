@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
+import axios from 'axios';
 import '../assets/styles/components/Choices.scss';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 
-const SecondChoice = ({ match }) => {
+const SecondChoice = ({ match, history }) => {
   // console.log(match);
   useEffect(() => {
     const checkAuth = async () => {
@@ -18,7 +19,7 @@ const SecondChoice = ({ match }) => {
           }
         })
         .catch((e) => {
-          props.history.push('/login');
+          history.push('/login');
         });
     };
     checkAuth();
