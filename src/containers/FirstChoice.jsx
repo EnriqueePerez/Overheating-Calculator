@@ -1,13 +1,22 @@
-import React from 'react';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useEffect, useState } from 'react';
 import '../assets/styles/components/Choices.scss';
 import { Link } from 'react-router-dom';
+import UserInfo from './UserInfo';
+import Navigation from './Navigation';
 
 const FirstChoice = (props) => {
-  // const { verifyUser, user } = useUser();
+  const isHome = true;
+  let [showMenu, setShowMenu] = useState(false);
 
   return (
     <>
-      <div>{/* <UserInfo /> */}</div>
+      <div className='navigationContainer'>
+        {isHome ? <div /> : <Navigation />}
+        <div onClick={() => setShowMenu(true)}>
+          <UserInfo showMenu={showMenu} />
+        </div>
+      </div>
       <div className='title-container'>
         <h1>Tipo de Unidad</h1>
       </div>

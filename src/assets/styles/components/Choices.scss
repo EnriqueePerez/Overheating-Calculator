@@ -60,3 +60,10 @@
     outline: none;
   }
 }
+
+.navigationContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.5em;
+}

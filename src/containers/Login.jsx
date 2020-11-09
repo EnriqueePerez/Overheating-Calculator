@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 // import axios from 'axios';
 import swal from 'sweetalert2';
 import Header from '../components/Header';
-import { useUser } from '../utils/userContext';
+import { login } from '../utils/userContext';
 import '../assets/styles/components/Login.scss';
 
 const Login = (props) => {
   const [form, setValues] = useState();
-  const { login } = useUser();
 
   const cleanForm = () => {
     document.getElementById('email').value = '';

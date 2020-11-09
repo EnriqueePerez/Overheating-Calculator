@@ -7,6 +7,7 @@ import SecondChoice from '../containers/SecondChoice';
 import ThirdChoice from '../containers/ThirdChoice';
 import FourthChoice from '../containers/FourthChoice';
 import Main from '../containers/Main';
+import ChangePass from '../containers/changePass';
 
 const App = () => (
   <BrowserRouter>
@@ -29,6 +30,7 @@ const App = () => (
         component={Main}
       />
       <Route exact path='/login' component={Login} />
+      <Route exact path='/changePass' component={ChangePass} />
     </Switch>
   </BrowserRouter>
 );

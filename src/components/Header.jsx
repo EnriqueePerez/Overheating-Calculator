@@ -5,9 +5,9 @@ import logo from '../assets/oxxo-logo.png';
 const Header = () => {
   return (
     <header className='login-header'>
-      <div className='logo-container'>
+      {/* <div className='logo-container'>
         <img src={logo} alt='Logo' />
-      </div>
+      </div> */}
       <h1 className='title'>Sobrecalentamiento de unidades de refrigeración</h1>
     </header>
   );

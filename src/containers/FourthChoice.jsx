@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Navigation from './Navigation';
+import UserInfo from './UserInfo';
 import '../assets/styles/components/Choices.scss';
 
 const FourthChoice = (props) => {
@@ -55,7 +56,6 @@ const FourthChoice = (props) => {
         });
       setStores(result);
     };
-    checkAuth();
     fetchData();
   }, []);
 
@@ -82,7 +82,10 @@ const FourthChoice = (props) => {
   };
   return (
     <>
-      <Navigation />
+      <div className='navigationContainer'>
+        <Navigation />
+        <UserInfo />
+      </div>
       <div className='title-container'>
         <h1>Tienda</h1>
         <div className='dropdown-list'>

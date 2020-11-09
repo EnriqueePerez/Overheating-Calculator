@@ -9,6 +9,8 @@ import {
   validateOverheatingTemperature,
 } from '../utils/validation';
 import Navigation from './Navigation';
+import UserInfo from './UserInfo';
+import { verifyUser } from '../utils/userContext';
 
 const Main = ({ match, history }) => {
   const [user, setUser] = useState(9);
@@ -39,24 +41,6 @@ const Main = ({ match, history }) => {
     id_usuario: 9,
   });
 
-  const checkAuth = async () => {
-    await axios({
-      url: `${process.env.SERVER_IP}/auth/verify`,
-      method: 'POST',
-      withCredentials: true,
-    })
-      .then((r) => {
-        if (r.status === 202) {
-          // useUserUpdate(r.data.user.name);
-          console.log(r.data);
-          // console.log('aprobado');
-        }
-      })
-      .catch((e) => {
-        history.push('/login');
-      });
-  };
-
   const generalValidation = () => {
     if (
       document.querySelector('#startPressure').style.backgroundColor ===
@@ -77,8 +61,21 @@ const Main = ({ match, history }) => {
     });
   };
 
+  const handleUserInput = (e) => {
+    verifyUser()
+      .then((r) => {
+        setUser(r.user.id);
+      })
+      .catch(() => console.log('No Autenticado'));
+    // const index = e.target.selectedIndex; //Getting the index of the selected element
+    // const optionElement = e.target.childNodes[index]; //Getting the html line of the element;
+    // const id = optionElement.getAttribute('id'); //Getting the id attribute from the HTML line
+    // // console.log(id);
+    // setUser(id);
+  };
+
   useEffect(() => {
-    checkAuth();
+    handleUserInput();
     validateOverheatingTemperature(overheatingTemperature, unit);
     setUnit(match.params.unit);
     setRefrigerant(match.params.refrigerant);
@@ -108,18 +105,13 @@ const Main = ({ match, history }) => {
   const calculate = () => {
     if (
       form.presion_succion === undefined ||
-      form.resistencia_pt1000 === undefined ||
-      user === 9
+      form.resistencia_pt1000 === undefined
     ) {
       Swal.fire({
         title: 'Faltan campos por rellenar',
         icon: 'error',
       });
-    } else if (
-      form.presion_succion === '' ||
-      form.resistencia_pt1000 === '' ||
-      user === 9
-    ) {
+    } else if (form.presion_succion === '' || form.resistencia_pt1000 === '') {
       Swal.fire({
         title: 'Faltan campos por rellenar',
         icon: 'error',
@@ -165,6 +157,7 @@ const Main = ({ match, history }) => {
       refrigerante: form.refrigerante,
       CR: form.CR,
       id_usuario: form.id_usuario,
+      temp_ambiente: form.temp_ambiente,
     };
     return formattedForm;
   };
@@ -324,6 +317,8 @@ const Main = ({ match, history }) => {
     // generalValidation();
     // e.preventDefault();
     const data = formattingForm(form);
+    // console.log(user);
+    // console.log(data);
     // alert(JSON.stringify(formattedForm));
     fetch(`${process.env.SERVER_IP}/api/data`, {
       method: 'POST',
@@ -395,17 +390,13 @@ const Main = ({ match, history }) => {
     }
   };
 
-  const handleUserInput = (e) => {
-    const index = e.target.selectedIndex; //Getting the index of the selected element
-    const optionElement = e.target.childNodes[index]; //Getting the html line of the element;
-    const id = optionElement.getAttribute('id'); //Getting the id attribute from the HTML line
-    // console.log(id);
-    setUser(id);
-  };
-
   return (
+    //eliminate user id form and add ambient temperature, then add screen to change pass
     <>
-      <Navigation />
+      <div className='navigationContainer'>
+        <Navigation />
+        <UserInfo />
+      </div>
       <header>
         <h2>Calculadora de sobrecalentamiento</h2>
         <p>{`${unit} ${match.params.unitnumber}`}</p>
@@ -413,7 +404,7 @@ const Main = ({ match, history }) => {
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>
       <form>
-        <div className='field-container'>
+        {/* <div className='field-container'>
           <h3>Usuario</h3>
           <div className='user-dropdown'>
             <select onChange={handleUserInput}>
@@ -446,7 +437,7 @@ const Main = ({ match, history }) => {
               </option>
             </select>
           </div>
-        </div>
+        </div> */}
         <div className='field-container'>
           <h3>Presión de arranque del presostato</h3>
           <input
@@ -491,13 +482,25 @@ const Main = ({ match, history }) => {
               inputMode='decimal'
             />
           </div>
-          <div className='field-container'>
-            <h3>Comentarios (opcional)</h3>
-            <textarea
-              name='comentarios'
-              className='comments'
-              onChange={handleInput}
-            />
+          <div className='additionalData'>
+            <div className='field-container'>
+              <h3>Temperatura ambiente</h3>
+              <input
+                name='temp_ambiente'
+                type='number'
+                placeholder='°C'
+                onChange={handleInput}
+                inputMode='decimal'
+              />
+            </div>
+            <div className='field-container'>
+              <h3>Comentarios (opcional)</h3>
+              <textarea
+                name='comentarios'
+                className='comments'
+                onChange={handleInput}
+              />
+            </div>
           </div>
           <div className='field-container'>
             <button type='button' onClick={calculate}>
