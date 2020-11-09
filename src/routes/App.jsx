@@ -7,7 +7,7 @@ import SecondChoice from '../containers/SecondChoice';
 import ThirdChoice from '../containers/ThirdChoice';
 import FourthChoice from '../containers/FourthChoice';
 import Main from '../containers/Main';
-import ChangePass from '../containers/changePass';
+import ChangePass from '../containers/ChangePass';
 
 const App = () => (
   <BrowserRouter>
