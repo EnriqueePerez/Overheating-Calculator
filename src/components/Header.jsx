@@ -1,15 +1,19 @@
 import React from 'react';
 import '../assets/styles/components/Header.scss';
-// import logo from '../assets/oxxo-logo.png';
+import logo from '../assets/ISAAR-Logo.png';
 
 const Header = () => {
   return (
-    <header className='login-header'>
-      {/* <div className='logo-container'>
+    <>
+      <header className='login-header'>
+        <h1 className='title'>
+          Calculador de sobrecalentamiento de unidades de refrigeración
+        </h1>
+      </header>
+      <div className='logo-container'>
         <img src={logo} alt='Logo' />
-      </div> */}
-      <h1 className='title'>Sobrecalentamiento de unidades de refrigeración</h1>
-    </header>
+      </div>
+    </>
   );
 };
 

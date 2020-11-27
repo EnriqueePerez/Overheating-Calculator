@@ -1,17 +1,26 @@
 .login-header {
+  margin-top: 0;
   display: flex;
   flex-direction: row;
   flex: 1;
   justify-content: space-evenly;
   align-items: center;
   height: 60px;
-  padding: 0.8em 0.5em 0 0.5em;
+  padding: 0.8em 0.5em 0.8em 0.5em;
+  // background-color: rgba(255, 255, 255, 0.767);
+  & h1 {
+    margin: 0;
+    color: black;
+  }
 }
 
 .logo-container {
-  width: 60px;
+  display: flex;
+  justify-content: center;
+  width: auto;
+  align-self: center;
   & img {
-    height: 60px;
+    height: 150px;
     width: auto;
   }
 }

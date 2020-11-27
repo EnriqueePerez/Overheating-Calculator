@@ -77,11 +77,11 @@ const Login = (props) => {
     });
   };
   return (
-    <>
+    <div style={{ backgroundColor: '#FFFFFFC4', height: '100vh' }}>
       <Header />
       <div className='main-container'>
         <div className='login-title-container'>
-          <h2>Iniciar sesión</h2>
+          <h2 style={{ color: 'black' }}>Iniciar sesión</h2>
         </div>
         <form className='login-form'>
           <input
@@ -101,7 +101,7 @@ const Login = (props) => {
           />
           <div className='show-password'>
             <input type='checkbox' onClick={showPassword} />
-            <p>Mostrar contraseña</p>
+            <p style={{ color: 'black' }}>Mostrar contraseña</p>
           </div>
           <button type='button' onClick={handleLogin}>
             Acceder
@@ -111,7 +111,7 @@ const Login = (props) => {
           </button> */}
         </form>
       </div>
-    </>
+    </div>
   );
 };
 
