@@ -173,7 +173,7 @@ const OperationMain = ({ match, history }) => {
       if (operation === false) {
         setReadyToSend(false);
         Swal.fire({
-          title: 'El retorno no puede ser mayor que la inyección',
+          title: 'El retorno no puede ser menor que la inyección',
           icon: 'error',
         });
       } else {
