@@ -71,7 +71,7 @@ const OperationThird = (props) => {
         <Navigation />
         <UserInfo />
       </div>
-      <Title title='Operación de equipo' />
+      <Title title='Eficiencia de Equipo' />
       <div className='title-container'>
         <h1>Tienda</h1>
         <div className='dropdown-list'>

@@ -13,7 +13,7 @@ const OperationSecond = ({ match }) => {
         <Navigation />
         <UserInfo />
       </div>
-      <Title title='Operación de equipo' />
+      <Title title='Eficiencia de Equipo' />
       <div className='title-container'>
         <h1>Número de unidad</h1>
       </div>

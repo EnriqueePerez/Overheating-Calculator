@@ -459,7 +459,7 @@ const OperationMain = ({ match, history }) => {
         <UserInfo />
       </div>
       <header>
-        <h2>Operación de Trabajo</h2>
+        <h2>Eficiencia de Equipo</h2>
         <p>{`${unit} ${match.params.unitnumber}`}</p>
         <p>{refrigerant}</p>
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>

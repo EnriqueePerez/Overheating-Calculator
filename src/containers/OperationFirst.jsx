@@ -14,7 +14,7 @@ const OperationFirst = (props) => {
         <Navigation />
         <UserInfo />
       </div>
-      <Title title='Operación de Equipo' />
+      <Title title='Eficiencia de Equipo' />
       <div className='title-container'>
         <h1>Tipo de Unidad</h1>
       </div>
