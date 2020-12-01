@@ -224,7 +224,7 @@ export const calculateDeltaAndTolerances = (
   evaporatorCycles,
   condenserCycles
 ) => {
-  while (retorno > injection) {
+  if (retorno > injection) {
     const percentageTolerance = Math.abs(
       evaporatorPercentage - condenserPercentage
     );
