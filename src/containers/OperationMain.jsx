@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../assets/styles/components/Main.scss';
+import '../assets/styles/components/OperationMain.scss';
 import Swal from 'sweetalert2';
 import {
   validateStopPressure,
   validateStartPressure,
   calculation,
   validateOverheatingTemperature,
-} from '../utils/validation';
+} from '../utils/overValidation';
+import {
+  validatePercentage,
+  validateCycles,
+  calculateDeltaAndTolerances,
+} from '../utils/operationValidation';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
 import { verifyUser } from '../utils/userContext';
 
-const Main = ({ match, history }) => {
+const OperationMain = ({ match, history }) => {
   const [user, setUser] = useState(9);
   const [unit, setUnit] = useState('Sin Unidad');
   const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
@@ -20,21 +24,23 @@ const Main = ({ match, history }) => {
   const [storeCr, setStoreCr] = useState('');
   // /?unit=conservacion&refrigerant=R404a
 
-  const [tubeTemperature, setTubeTemperature] = useState(0);
-  const [saturationTemperature, setSaturationTemperature] = useState(0);
-  const [overheatingTemperature, setOverheatingTemperature] = useState(0);
+  const [percentageCheck, setPercentageCheck] = useState(
+    'Esperando Validación'
+  );
+  const [cyclesCheck, setCyclesCheck] = useState('Esperando Validación');
+  const [delta, setDelta] = useState(0);
   const [approved, setApproved] = useState(0);
   const [readyToSend, setReadyToSend] = useState(false);
   const [form, setValues] = useState({
     comentarios: 'Sin comentarios',
-    aprobado: 0,
-    presion_arranque: 0,
-    presion_paro: 0,
-    presion_succion: undefined,
-    resistencia_pt1000: undefined,
-    temp_saturacion: 0,
-    temp_tubo: 0,
-    temp_sobrecalentamiento: '',
+    aprobado: 'si',
+    retorno: undefined,
+    inyeccion: undefined,
+    porcentaje_evaporador: undefined,
+    ciclos_evaporador: undefined,
+    porcentaje_condensador: undefined,
+    ciclos_condensador: undefined,
+    delta: '',
     unidad: 'Sin unidad',
     refrigerante: 'Sin refrigerante',
     CR: 'AAA',
@@ -67,22 +73,47 @@ const Main = ({ match, history }) => {
         setUser(r.user.id);
       })
       .catch(() => console.log('No Autenticado'));
-    // const index = e.target.selectedIndex; //Getting the index of the selected element
-    // const optionElement = e.target.childNodes[index]; //Getting the html line of the element;
-    // const id = optionElement.getAttribute('id'); //Getting the id attribute from the HTML line
-    // // console.log(id);
-    // setUser(id);
+  };
+
+  const percentageAndCycleCheck = (e) => {
+    const percentageCheck = document
+      .getElementById('percentageCheck')
+      .getAttribute('value');
+    const cycleCheck = document
+      .getElementById('cycleCheck')
+      .getAttribute('value');
+
+    if (percentageCheck === 'Aprobado') {
+      document.getElementById('percentageCheck').style.color = '#88fc88';
+    } else {
+      document.getElementById('percentageCheck').style.color = '#fa6b6b';
+    }
+
+    if (cycleCheck === 'Aprobado') {
+      document.getElementById('cycleCheck').style.color = '#88fc88';
+    } else {
+      document.getElementById('cycleCheck').style.color = '#fa6b6b';
+    }
+  };
+
+  const validateDelta = () => {
+    if (delta >= 2.5 && delta <= 5) {
+      document.getElementById('delta').style.color = '#88fc88';
+    } else {
+      document.getElementById('delta').style.color = '#fa6b6b';
+    }
   };
 
   useEffect(() => {
     handleUserInput();
-    validateOverheatingTemperature(overheatingTemperature, unit);
+    percentageAndCycleCheck();
+    validateDelta();
     setUnit(match.params.unit);
     setRefrigerant(match.params.refrigerant);
     setStoreCr(match.params.storecr);
     setStore(match.params.store);
-    generalValidation();
-  }, [approved, overheatingTemperature, readyToSend]);
+    // generalValidation();
+  }, [approved, readyToSend, delta]);
 
   const handleInput = (e) => {
     setValues({
@@ -92,53 +123,89 @@ const Main = ({ match, history }) => {
     setReadyToSend(false);
   };
 
-  const validationStartPressure = (e) => {
-    validateStartPressure(e, refrigerant, unit);
+  const validatingPercentage = (e) => {
+    const aprobado = validatePercentage(e.target.value);
+    aprobado
+      ? (document.getElementById(e.target.id).style.backgroundColor = '#88fc88')
+      : (document.getElementById(e.target.id).style.backgroundColor =
+          '#fa6b6b');
     handleInput(e);
   };
 
-  const validationStopPressure = (e) => {
-    validateStopPressure(e, refrigerant, unit);
+  const validatingCycles = (e) => {
+    const aprobado = validateCycles(e.target.value);
+    aprobado
+      ? (document.getElementById(e.target.id).style.backgroundColor = '#88fc88')
+      : (document.getElementById(e.target.id).style.backgroundColor =
+          '#fa6b6b');
     handleInput(e);
   };
 
   const calculate = () => {
     if (
-      form.presion_succion === undefined ||
-      form.resistencia_pt1000 === undefined
+      form.retorno === undefined ||
+      form.inyeccion === undefined ||
+      form.porcentaje_evaporador === undefined ||
+      form.porcentaje_evaporador === undefined ||
+      form.ciclos_evaporador === undefined ||
+      form.ciclos_condensador === undefined
     ) {
       Swal.fire({
         title: 'Faltan campos por rellenar',
         icon: 'error',
       });
-    } else if (form.presion_succion === '' || form.resistencia_pt1000 === '') {
+    } else if (
+      form.retorno === '' ||
+      form.inyeccion === '' ||
+      form.porcentaje_evaporador === '' ||
+      form.porcentaje_evaporador === '' ||
+      form.ciclos_evaporador === '' ||
+      form.ciclos_condensador === ''
+    ) {
       Swal.fire({
         title: 'Faltan campos por rellenar',
         icon: 'error',
       });
     } else {
-      const operation = calculation(
-        refrigerant,
-        form.presion_succion,
-        // eslint-disable-next-line comma-dangle
-        form.resistencia_pt1000
+      const operation = calculateDeltaAndTolerances(
+        form.retorno,
+        form.inyeccion,
+        form.porcentaje_evaporador,
+        form.porcentaje_condensador,
+        form.ciclos_evaporador,
+        form.ciclos_condensador
       );
-      operation &&
-        (setSaturationTemperature(operation.saturationTemp),
-        setTubeTemperature(operation.tubeTemp),
-        setOverheatingTemperature(operation.overheatTemp));
+      if (operation === false) {
+        setReadyToSend(false);
+        Swal.fire({
+          title: 'El retorno no puede ser mayor que la inyección',
+          icon: 'error',
+        });
+      } else {
+        setPercentageCheck(operation.percentageValue);
+        setCyclesCheck(operation.cycleValue);
+        setDelta(operation.delta);
+        setValues({
+          ...form,
+          delta: operation.delta,
+          unidad: `${unit} ${match.params.unitnumber}`,
+          refrigerante: refrigerant,
+          CR: storeCr,
+          id_usuario: user,
+        });
+        setReadyToSend(true);
+      }
 
-      setValues({
-        ...form,
-        temp_saturacion: operation.saturationTemp,
-        temp_tubo: operation.tubeTemp,
-        temp_sobrecalentamiento: operation.overheatTemp,
-        unidad: `${unit} ${match.params.unitnumber}`,
-        refrigerante: refrigerant,
-        CR: storeCr,
-        id_usuario: user,
-      });
-      setReadyToSend(true);
+      // const operation = calculation(
+      //   refrigerant,
+      //   form.presion_succion,
+      //   // eslint-disable-next-line comma-dangle
+      //   form.resistencia_pt1000
+      // );
+      // operation &&
+      //   (setSaturationTemperature(operation.saturationTemp),
+      //   setTubeTemperature(operation.tubeTemp),
+      //   setOverheatingTemperature(operation.overheatTemp));
     }
   };
 
@@ -391,153 +458,127 @@ const Main = ({ match, history }) => {
   };
 
   return (
-    //eliminate user id form and add ambient temperature, then add screen to change pass
     <>
       <div className='navigationContainer'>
         <Navigation />
         <UserInfo />
       </div>
       <header>
-        <h2>Calculadora de sobrecalentamiento</h2>
+        <h2>Operación de Trabajo</h2>
         <p>{`${unit} ${match.params.unitnumber}`}</p>
         <p>{refrigerant}</p>
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>
       <form>
-        {/* <div className='field-container'>
-          <h3>Usuario</h3>
-          <div className='user-dropdown'>
-            <select onChange={handleUserInput}>
-              <option id='9' value='Admin'>
-                Seleccionar usuario
-              </option>
-              <option id='1' value='Mario Enrique'>
-                Mario Enrique
-              </option>
-              <option id='2' value='Alberto Zaid'>
-                Alberto Zaid
-              </option>
-              <option id='3' value='Juan Carlos'>
-                Juan Carlos
-              </option>
-              <option id='4' value='Jesus'>
-                Jesus
-              </option>
-              <option id='5' value='Elias'>
-                Elias
-              </option>
-              <option id='6' value='Alexis'>
-                Alexis
-              </option>
-              <option id='7' value='José Abraham'>
-                José Abraham
-              </option>
-              <option id='8' value='Francisco'>
-                Francisco
-              </option>
-            </select>
-          </div>
-        </div> */}
+        <h2>Delta</h2>
         <div className='field-container'>
-          <h3>Presión de arranque del presostato</h3>
+          <h3>Sensor de Retorno</h3>
           <input
-            name='presion_arranque'
-            id='startPressure'
+            name='retorno'
+            id='retorno'
+            placeholder='°C'
             type='number'
-            placeholder='PSI'
-            onChange={validationStartPressure}
+            onChange={handleInput}
             inputMode='decimal'
           />
         </div>
         <div className='field-container'>
-          <h3>Presión de paro del presostato</h3>
+          <h3>Sensor de Inyección</h3>
           <input
-            name='presion_paro'
-            id='stopPressure'
+            name='inyeccion'
+            id='inyeccion'
+            placeholder='°C'
             type='number'
-            placeholder='PSI'
-            onChange={validationStopPressure}
+            onChange={handleInput}
+            inputMode='decimal'
+          />
+        </div>
+        <h2>Evaporador</h2>
+        <div className='field-container'>
+          <h3>Porcentaje</h3>
+          <input
+            name='porcentaje_evaporador'
+            id='evaporatorPercentage'
+            type='number'
+            placeholder='%'
+            onChange={validatingPercentage}
+            inputMode='decimal'
+          />
+        </div>
+        <div className='field-container'>
+          <h3>Ciclos</h3>
+          <input
+            name='ciclos_evaporador'
+            id='evaporatorCycles'
+            type='number'
+            onChange={validatingCycles}
             inputMode='decimal'
           />
         </div>
 
-        <div className='calculator'>
-          <div className='field-container'>
-            <h3>Presión de succión</h3>
-            <input
-              name='presion_succion'
-              type='number'
-              placeholder='PSI'
-              onChange={handleInput}
-              inputMode='decimal'
-            />
-          </div>
-          <div className='field-container'>
-            <h3>Resistencia PT1000</h3>
-            <input
-              name='resistencia_pt1000'
-              type='number'
-              placeholder='Ω'
-              onChange={handleInput}
-              inputMode='decimal'
-            />
-          </div>
-          <div className='additionalData'>
-            <div className='field-container'>
-              <h3>Temperatura ambiente</h3>
-              <input
-                name='temp_ambiente'
-                type='number'
-                placeholder='°C'
-                onChange={handleInput}
-                inputMode='decimal'
-              />
-            </div>
-            <div className='field-container'>
-              <h3>Comentarios (opcional)</h3>
-              <textarea
-                name='comentarios'
-                className='comments'
-                onChange={handleInput}
-              />
-            </div>
-          </div>
-          <div className='field-container'>
-            <button type='button' onClick={calculate}>
-              Calcular
+        <h2>Condensador</h2>
+        <div className='field-container'>
+          <h3>Porcentaje</h3>
+          <input
+            name='porcentaje_condensador'
+            id='condenserPercentage'
+            type='number'
+            placeholder='%'
+            onChange={validatingPercentage}
+            inputMode='decimal'
+          />
+        </div>
+        <div className='field-container'>
+          <h3>Ciclos</h3>
+          <input
+            name='ciclos_condensador'
+            id='condenserCycles'
+            type='number'
+            onChange={validatingCycles}
+            inputMode='decimal'
+          />
+        </div>
+        <div className='field-container'>
+          <h3>Comentarios (opcional)</h3>
+          <textarea
+            name='comentarios'
+            className='comments'
+            onChange={handleInput}
+          />
+        </div>
+        <div className='validation-buttons-container'>
+          <button type='button' onClick={calculate}>
+            Validar Datos
+          </button>
+          {/* {readyToSend ? (
+            <button type='submit' onClick={confirmSubmit}>
+              Enviar
             </button>
-            {readyToSend ? (
-              <button type='submit' onClick={confirmSubmit}>
-                Enviar
-              </button>
-            ) : (
-              <p>
-                Se requiere calcular y validar los datos antes de poder
-                enviarlos
-              </p>
-            )}
-          </div>
-          <div className='temperature-container'>
-            <h3>Temperatura del tubo</h3>
-            <p name='Temperatura del tubo' onChange={handleInput}>
-              {`${tubeTemperature} °C`}
+          ) : (
+            <p>
+              Se requiere calcular y validar los datos antes de poder enviarlos
             </p>
-          </div>
-          <div className='temperature-container'>
-            <h3>Temperatura de saturación</h3>
-            <p name='Temperatura de saturación'>
-              {`${saturationTemperature} °C`}
-            </p>
-          </div>
-          <div className='main-temperature-container'>
-            <h2>Temperatura de sobrecalentamiento</h2>
-            {}
-            <p id='overheatingTemp'>{`${overheatingTemperature} °C`}</p>
-          </div>
+          )} */}
+        </div>
+        <div className='percentage-check-container'>
+          <h3>Porcentaje</h3>
+          <p value={percentageCheck} id='percentageCheck'>
+            {percentageCheck}
+          </p>
+        </div>
+        <div className='cycle-check-container'>
+          <h3>Ciclos</h3>
+          <p value={cyclesCheck} id='cycleCheck'>
+            {cyclesCheck}
+          </p>
+        </div>
+        <div className='delta-container'>
+          <h2>Delta</h2>
+          <p id='delta'>{delta}</p>
         </div>
       </form>
     </>
   );
 };
 
-export default Main;
+export default OperationMain;

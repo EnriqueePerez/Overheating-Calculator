@@ -1,33 +1,59 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import '../assets/styles/App.scss';
+import Home from '../containers/Home';
 import Login from '../containers/Login';
-import FirstChoice from '../containers/FirstChoice';
-import SecondChoice from '../containers/SecondChoice';
-import ThirdChoice from '../containers/ThirdChoice';
-import FourthChoice from '../containers/FourthChoice';
-import Main from '../containers/Main';
+import OverFirst from '../containers/OverFirst';
+import OverSecond from '../containers/OverSecond';
+import OverThird from '../containers/OverThird';
+import OverFourth from '../containers/OverFourth';
+import OverMain from '../containers/OverMain';
+import OperationFirst from '../containers/OperationFirst';
+import OperationSecond from '../containers/OperationSecond';
+import OperationThird from '../containers/OperationThird';
 import ChangePass from '../containers/ChangePass';
+import OperationMain from '../containers/OperationMain';
 
 const App = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path='/' component={FirstChoice} />
-      <Route exact path='/unitnumber/:unit' component={SecondChoice} />
+      <Route exact path='/' component={Home} />
+      <Route exact path='/overheating' component={OverFirst} />
       <Route
         exact
-        path='/refrigerant/:unit/:unitnumber'
-        component={ThirdChoice}
+        path='/overheating/unitnumber/:unit'
+        component={OverSecond}
       />
       <Route
         exact
-        path='/stores/:refrigerant/:unit/:unitnumber'
-        component={FourthChoice}
+        path='/overheating/refrigerant/:unit/:unitnumber'
+        component={OverThird}
       />
       <Route
         exact
-        path='/main/:refrigerant/:unit/:unitnumber/:storecr/:store'
-        component={Main}
+        path='/overheating/stores/:refrigerant/:unit/:unitnumber'
+        component={OverFourth}
+      />
+      <Route
+        exact
+        path='/overheating/main/:refrigerant/:unit/:unitnumber/:storecr/:store'
+        component={OverMain}
+      />
+      <Route exact path='/operation' component={OperationFirst} />
+      <Route
+        exact
+        path='/operation/unitnumber/:unit'
+        component={OperationSecond}
+      />
+      <Route
+        exact
+        path='/operation/stores/:unit/:unitnumber'
+        component={OperationThird}
+      />
+      <Route
+        exact
+        path='/operation/main/:unit/:unitnumber/:storecr/:store'
+        component={OperationMain}
       />
       <Route exact path='/login' component={Login} />
       <Route exact path='/changePass' component={ChangePass} />

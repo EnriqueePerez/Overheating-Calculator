@@ -38,7 +38,7 @@ const UserInfo = () => {
       verifyUser()
         .then((r) => {
           setUser(r.user.name);
-          // console.log(r.user.name);
+          // console. log(r.user.name);
         })
         .catch(() => history.push('/login'));
     }

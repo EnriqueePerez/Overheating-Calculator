@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import UserInfo from './UserInfo';
 import Navigation from './Navigation';
 
-const FirstChoice = (props) => {
+const Home = (props) => {
   const isHome = true;
 
   return (
@@ -16,21 +16,18 @@ const FirstChoice = (props) => {
         <UserInfo />
       </div>
       <div className='title-container'>
-        <h1>Tipo de Unidad</h1>
+        <h1>Menú</h1>
       </div>
       <div className='buttons-container'>
-        <Link to='/unitnumber/Conservacion'>
-          <button type='submit'>Conservación</button>
+        <Link to='/operation'>
+          <button type='submit'>Operación de Trabajo</button>
         </Link>
-        <Link to='/refrigerant/Cerveza/1'>
-          <button type='submit'>Cerveza</button>
-        </Link>
-        <Link to='/refrigerant/Hielo/1'>
-          <button type='submit'>Hielo</button>
+        <Link to='/overheating'>
+          <button type='submit'>Sobrecalentamiento</button>
         </Link>
       </div>
     </>
   );
 };
 
-export default FirstChoice;
+export default Home;

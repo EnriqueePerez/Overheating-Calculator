@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
+import Title from '../components/Title';
 import '../assets/styles/components/Choices.scss';
 
-const FourthChoice = (props) => {
+const OperationThird = (props) => {
   const { match } = props;
   // console.log(match);
   const [stores, setStores] = useState([
@@ -15,21 +15,6 @@ const FourthChoice = (props) => {
   const [selectedStoreCR, setSelectedStoreCR] = useState('');
 
   useEffect(() => {
-    const checkAuth = async () => {
-      await axios({
-        url: `${process.env.SERVER_IP}/auth/verify`,
-        method: 'POST',
-        withCredentials: true,
-      })
-        .then((r) => {
-          if (r.status === 202) {
-            console.log('aprobado');
-          }
-        })
-        .catch((e) => {
-          props.history.push('/login');
-        });
-    };
     const fetchData = async () => {
       const result = await fetch(`${process.env.SERVER_IP}/api/stores`, {
         method: 'GET',
@@ -76,7 +61,7 @@ const FourthChoice = (props) => {
       e.preventDefault();
       props.history.push(
         // eslint-disable-next-line comma-dangle
-        `/main/${match.params.refrigerant}/${match.params.unit}/${match.params.unitnumber}/${selectedStoreCR}/${selectedStore}`
+        `/operation/main/${match.params.unit}/${match.params.unitnumber}/${selectedStoreCR}/${selectedStore}`
       );
     }
   };
@@ -86,6 +71,7 @@ const FourthChoice = (props) => {
         <Navigation />
         <UserInfo />
       </div>
+      <Title title='Operación de equipo' />
       <div className='title-container'>
         <h1>Tienda</h1>
         <div className='dropdown-list'>
@@ -110,4 +96,4 @@ const FourthChoice = (props) => {
   );
 };
 
-export default FourthChoice;
+export default OperationThird;
