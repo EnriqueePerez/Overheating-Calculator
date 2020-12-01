@@ -70,30 +70,30 @@ export async function logout() {
 
 export async function verifyUser() {
   return new Promise((resolve, reject) => {
-    resolve({ user: { name: 'Enrique' } });
-    // axios({
-    //   url: `${process.env.SERVER_IP}/auth/verify`,
-    //   method: 'POST',
-    //   withCredentials: 'true',
-    // })
-    //   .then((r) => {
-    //     if (r.status === 202) {
-    //       // setUser(r.data);
-    //       resolve(r.data);
-    //       // useUserUpdate(r.data.user.name);
-    //       //   console.log(r.data);
-    //       // console.log('aprobado');
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     if (err.response === undefined) {
-    //       reject(500);
-    //     } else if (err.response.status === 401) {
-    //       reject(401);
-    //     } else if (err.response.status === 404) {
-    //       reject(404);
-    //     }
-    //   });
+    // resolve({ user: { name: 'Enrique' } });
+    axios({
+      url: `${process.env.SERVER_IP}/auth/verify`,
+      method: 'POST',
+      withCredentials: 'true',
+    })
+      .then((r) => {
+        if (r.status === 202) {
+          // setUser(r.data);
+          resolve(r.data);
+          // useUserUpdate(r.data.user.name);
+          //   console.log(r.data);
+          // console.log('aprobado');
+        }
+      })
+      .catch((err) => {
+        if (err.response === undefined) {
+          reject(500);
+        } else if (err.response.status === 401) {
+          reject(401);
+        } else if (err.response.status === 404) {
+          reject(404);
+        }
+      });
   });
 }
 

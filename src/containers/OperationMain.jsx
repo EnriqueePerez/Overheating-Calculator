@@ -108,7 +108,7 @@ const OperationMain = ({ match, history }) => {
     setStoreCr(match.params.storecr);
     setStore(match.params.store);
     // generalValidation();
-  }, [approved, readyToSend, delta]);
+  }, [readyToSend, delta]); //return approved after enabling database
 
   const handleInput = (e) => {
     setValues({
@@ -405,52 +405,52 @@ const OperationMain = ({ match, history }) => {
     setReadyToSend(false);
   };
 
-  // const confirmSubmit = (e) => {
-  //   if (!approved) {
-  //     e.preventDefault();
-  //     Swal.fire({
-  //       title: 'Estas enviando datos no aprobados',
-  //       text: '¿Deseas continuar?',
-  //       icon: 'warning',
-  //       showCancelButton: true,
-  //       confirmButtonColor: '#3085d6',
-  //       cancelButtonColor: '#d33',
-  //       confirmButtonText: 'Si, envialos',
-  //       cancelButtonText: 'No enviar',
-  //     }).then((result) => {
-  //       if (result.value) {
-  //         sendData(e);
-  //       } else {
-  //         Swal.fire({
-  //           title: 'Datos no enviados',
-  //           icon: 'info',
-  //         });
-  //       }
-  //     });
-  //   }
-  //   if (approved) {
-  //     e.preventDefault();
-  //     Swal.fire({
-  //       title: 'Estas a punto de enviar datos.',
-  //       text: '¿Deseas continuar?',
-  //       icon: 'warning',
-  //       showCancelButton: true,
-  //       confirmButtonColor: '#3085d6',
-  //       cancelButtonColor: '#d33',
-  //       confirmButtonText: 'Si, envialos',
-  //       cancelButtonText: 'No enviar',
-  //     }).then((result) => {
-  //       if (result.value) {
-  //         sendData(e);
-  //       } else {
-  //         Swal.fire({
-  //           title: 'Datos no enviados',
-  //           icon: 'info',
-  //         });
-  //       }
-  //     });
-  //   }
-  // };
+  const confirmSubmit = (e) => {
+    if (!approved) {
+      e.preventDefault();
+      Swal.fire({
+        title: 'Estas enviando datos no aprobados',
+        text: '¿Deseas continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, envialos',
+        cancelButtonText: 'No enviar',
+      }).then((result) => {
+        if (result.value) {
+          sendData(e);
+        } else {
+          Swal.fire({
+            title: 'Datos no enviados',
+            icon: 'info',
+          });
+        }
+      });
+    }
+    if (approved) {
+      e.preventDefault();
+      Swal.fire({
+        title: 'Estas a punto de enviar datos.',
+        text: '¿Deseas continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, envialos',
+        cancelButtonText: 'No enviar',
+      }).then((result) => {
+        if (result.value) {
+          sendData(e);
+        } else {
+          Swal.fire({
+            title: 'Datos no enviados',
+            icon: 'info',
+          });
+        }
+      });
+    }
+  };
 
   return (
     <>
