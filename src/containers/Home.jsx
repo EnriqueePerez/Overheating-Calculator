@@ -23,7 +23,9 @@ const Home = (props) => {
           <button type='submit'>Operación de Trabajo</button>
         </Link>
         <Link to='/overheating'>
-          <button type='submit'>Sobrecalentamiento</button>
+          <button style={{ fontSize: '1.2em' }} type='submit'>
+            Sobrecalentamiento
+          </button>
         </Link>
       </div>
     </>
