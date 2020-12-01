@@ -170,6 +170,8 @@ const OperationMain = ({ match, history }) => {
         form.ciclos_evaporador,
         form.ciclos_condensador
       );
+      console.log(operation);
+      console.log(form);
       if (operation === false) {
         setReadyToSend(false);
         Swal.fire({

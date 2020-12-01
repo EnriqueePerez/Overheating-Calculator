@@ -217,13 +217,15 @@ export const validateCycles = (cycles) => {
 };
 
 export const calculateDeltaAndTolerances = (
-  retorno,
-  injection,
+  retornoOriginal,
+  injectionOriginal,
   evaporatorPercentage,
   condenserPercentage,
   evaporatorCycles,
   condenserCycles
 ) => {
+  const retorno = parseInt(retornoOriginal, 10);
+  const injection = parseInt(injectionOriginal, 10);
   if (retorno > injection) {
     const percentageTolerance = Math.abs(
       evaporatorPercentage - condenserPercentage
