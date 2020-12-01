@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 // export const validateStartPressure = (e, refrigerant, unit) => {
 //   switch (refrigerant) {
 //     case 'R22': {

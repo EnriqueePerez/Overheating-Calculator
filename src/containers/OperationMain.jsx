@@ -2,12 +2,6 @@ import React, { useState, useEffect } from 'react';
 import '../assets/styles/components/OperationMain.scss';
 import Swal from 'sweetalert2';
 import {
-  validateStopPressure,
-  validateStartPressure,
-  calculation,
-  validateOverheatingTemperature,
-} from '../utils/overValidation';
-import {
   validatePercentage,
   validateCycles,
   calculateDeltaAndTolerances,
@@ -25,11 +19,12 @@ const OperationMain = ({ match, history }) => {
   // /?unit=conservacion&refrigerant=R404a
 
   const [percentageCheck, setPercentageCheck] = useState(
+    // eslint-disable-next-line comma-dangle
     'Esperando Validación'
   );
   const [cyclesCheck, setCyclesCheck] = useState('Esperando Validación');
   const [delta, setDelta] = useState(0);
-  const [approved, setApproved] = useState(0);
+  // const [approved, setApproved] = useState(0);
   const [readyToSend, setReadyToSend] = useState(false);
   const [form, setValues] = useState({
     comentarios: 'Sin comentarios',
@@ -47,25 +42,25 @@ const OperationMain = ({ match, history }) => {
     id_usuario: 9,
   });
 
-  const generalValidation = () => {
-    if (
-      document.querySelector('#startPressure').style.backgroundColor ===
-        'rgb(136, 252, 136)' &&
-      document.querySelector('#stopPressure').style.backgroundColor ===
-        'rgb(136, 252, 136)' &&
-      document.getElementById('overheatingTemp').style.color === 'green'
-    ) {
-      setApproved(1);
-      // console.log(approved);
-    } else {
-      setApproved(0);
-      // console.log(approved);
-    }
-    setValues({
-      ...form,
-      aprobado: approved,
-    });
-  };
+  // const generalValidation = () => {
+  //   if (
+  //     document.querySelector('#startPressure').style.backgroundColor ===
+  //       'rgb(136, 252, 136)' &&
+  //     document.querySelector('#stopPressure').style.backgroundColor ===
+  //       'rgb(136, 252, 136)' &&
+  //     document.getElementById('overheatingTemp').style.color === 'green'
+  //   ) {
+  //     setApproved(1);
+  //     // console.log(approved);
+  //   } else {
+  //     setApproved(0);
+  //     // console.log(approved);
+  //   }
+  //   setValues({
+  //     ...form,
+  //     aprobado: approved,
+  //   });
+  // };
 
   const handleUserInput = (e) => {
     verifyUser()
@@ -410,52 +405,52 @@ const OperationMain = ({ match, history }) => {
     setReadyToSend(false);
   };
 
-  const confirmSubmit = (e) => {
-    if (!approved) {
-      e.preventDefault();
-      Swal.fire({
-        title: 'Estas enviando datos no aprobados',
-        text: '¿Deseas continuar?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, envialos',
-        cancelButtonText: 'No enviar',
-      }).then((result) => {
-        if (result.value) {
-          sendData(e);
-        } else {
-          Swal.fire({
-            title: 'Datos no enviados',
-            icon: 'info',
-          });
-        }
-      });
-    }
-    if (approved) {
-      e.preventDefault();
-      Swal.fire({
-        title: 'Estas a punto de enviar datos.',
-        text: '¿Deseas continuar?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, envialos',
-        cancelButtonText: 'No enviar',
-      }).then((result) => {
-        if (result.value) {
-          sendData(e);
-        } else {
-          Swal.fire({
-            title: 'Datos no enviados',
-            icon: 'info',
-          });
-        }
-      });
-    }
-  };
+  // const confirmSubmit = (e) => {
+  //   if (!approved) {
+  //     e.preventDefault();
+  //     Swal.fire({
+  //       title: 'Estas enviando datos no aprobados',
+  //       text: '¿Deseas continuar?',
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonColor: '#3085d6',
+  //       cancelButtonColor: '#d33',
+  //       confirmButtonText: 'Si, envialos',
+  //       cancelButtonText: 'No enviar',
+  //     }).then((result) => {
+  //       if (result.value) {
+  //         sendData(e);
+  //       } else {
+  //         Swal.fire({
+  //           title: 'Datos no enviados',
+  //           icon: 'info',
+  //         });
+  //       }
+  //     });
+  //   }
+  //   if (approved) {
+  //     e.preventDefault();
+  //     Swal.fire({
+  //       title: 'Estas a punto de enviar datos.',
+  //       text: '¿Deseas continuar?',
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonColor: '#3085d6',
+  //       cancelButtonColor: '#d33',
+  //       confirmButtonText: 'Si, envialos',
+  //       cancelButtonText: 'No enviar',
+  //     }).then((result) => {
+  //       if (result.value) {
+  //         sendData(e);
+  //       } else {
+  //         Swal.fire({
+  //           title: 'Datos no enviados',
+  //           icon: 'info',
+  //         });
+  //       }
+  //     });
+  //   }
+  // };
 
   return (
     <>
