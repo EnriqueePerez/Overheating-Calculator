@@ -7,7 +7,8 @@ const Header = () => {
     <>
       <header className='login-header'>
         <h1 className='title'>
-          Calculadora de sobrecalentamiento de unidades de refrigeración
+          Calculadora de eficiencia y sobrecalentamiento de unidades de
+          refrigeración
         </h1>
       </header>
       <div className='logo-container'>
