@@ -5,6 +5,7 @@ import {
   validatePercentage,
   validateCycles,
   calculateDeltaAndTolerances,
+  validateGeneralData,
 } from '../utils/operationValidation';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
@@ -13,7 +14,6 @@ import { verifyUser } from '../utils/userContext';
 const OperationMain = ({ match, history }) => {
   const [user, setUser] = useState(9);
   const [unit, setUnit] = useState('Sin Unidad');
-  const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
   const [store, setStore] = useState('Sin tienda');
   const [storeCr, setStoreCr] = useState('');
   // /?unit=conservacion&refrigerant=R404a
@@ -24,11 +24,11 @@ const OperationMain = ({ match, history }) => {
   );
   const [cyclesCheck, setCyclesCheck] = useState('Esperando Validación');
   const [delta, setDelta] = useState(0);
-  // const [approved, setApproved] = useState(0);
+  const [approved, setApproved] = useState('No');
   const [readyToSend, setReadyToSend] = useState(false);
   const [form, setValues] = useState({
     comentarios: 'Sin comentarios',
-    aprobado: 'si',
+    aprobado: 'No',
     retorno: undefined,
     inyeccion: undefined,
     porcentaje_evaporador: undefined,
@@ -37,30 +37,24 @@ const OperationMain = ({ match, history }) => {
     ciclos_condensador: undefined,
     delta: '',
     unidad: 'Sin unidad',
-    refrigerante: 'Sin refrigerante',
     CR: 'AAA',
     id_usuario: 9,
   });
 
-  // const generalValidation = () => {
-  //   if (
-  //     document.querySelector('#startPressure').style.backgroundColor ===
-  //       'rgb(136, 252, 136)' &&
-  //     document.querySelector('#stopPressure').style.backgroundColor ===
-  //       'rgb(136, 252, 136)' &&
-  //     document.getElementById('overheatingTemp').style.color === 'green'
-  //   ) {
-  //     setApproved(1);
-  //     // console.log(approved);
-  //   } else {
-  //     setApproved(0);
-  //     // console.log(approved);
-  //   }
-  //   setValues({
-  //     ...form,
-  //     aprobado: approved,
-  //   });
-  // };
+  const generalValidation = () => {
+    const validation = validateGeneralData();
+    if (validation) {
+      setApproved('Si');
+      // console.log(approved);
+    } else {
+      setApproved('No');
+      // console.log(approved);
+    }
+    setValues({
+      ...form,
+      aprobado: approved,
+    });
+  };
 
   const handleUserInput = (e) => {
     verifyUser()
@@ -92,10 +86,18 @@ const OperationMain = ({ match, history }) => {
   };
 
   const validateDelta = () => {
-    if (delta >= 2.5 && delta <= 5) {
-      document.getElementById('delta').style.color = '#88fc88';
+    if (unit === 'Clima') {
+      if (delta >= 10 && delta <= 15) {
+        document.getElementById('delta').style.color = '#88fc88';
+      } else {
+        document.getElementById('delta').style.color = '#fa6b6b';
+      }
     } else {
-      document.getElementById('delta').style.color = '#fa6b6b';
+      if (delta >= 2.5 && delta <= 5) {
+        document.getElementById('delta').style.color = '#88fc88';
+      } else {
+        document.getElementById('delta').style.color = '#fa6b6b';
+      }
     }
   };
 
@@ -104,11 +106,10 @@ const OperationMain = ({ match, history }) => {
     percentageAndCycleCheck();
     validateDelta();
     setUnit(match.params.unit);
-    setRefrigerant(match.params.refrigerant);
     setStoreCr(match.params.storecr);
     setStore(match.params.store);
-    // generalValidation();
-  }, [readyToSend, delta]); //return approved after enabling database
+    generalValidation();
+  }, [approved, readyToSend, delta]); //return approved after enabling database
 
   const handleInput = (e) => {
     setValues({
@@ -186,7 +187,6 @@ const OperationMain = ({ match, history }) => {
           ...form,
           delta: operation.delta,
           unidad: `${unit} ${match.params.unitnumber}`,
-          refrigerante: refrigerant,
           CR: storeCr,
           id_usuario: user,
         });
@@ -210,18 +210,16 @@ const OperationMain = ({ match, history }) => {
     const formattedForm = {
       comentarios: form.comentarios,
       aprobado: form.aprobado,
-      presion_arranque: form.presion_arranque,
-      presion_paro: form.presion_paro,
-      presion_succion: form.presion_succion,
-      resistencia_pt1000: form.resistencia_pt1000,
-      temp_saturacion: form.temp_saturacion,
-      temp_tubo: form.temp_tubo,
-      temp_sobrecalentamiento: form.temp_sobrecalentamiento,
+      retorno: form.retorno,
+      inyeccion: form.inyeccion,
+      porcentaje_evaporador: form.porcentaje_evaporador,
+      ciclos_evaporador: form.ciclos_evaporador,
+      porcentaje_condensador: form.porcentaje_condensador,
+      ciclos_condensador: form.ciclos_condensador,
+      delta: form.delta,
       unidad: form.unidad,
-      refrigerante: form.refrigerante,
       CR: form.CR,
       id_usuario: form.id_usuario,
-      temp_ambiente: form.temp_ambiente,
     };
     return formattedForm;
   };
@@ -230,21 +228,19 @@ const OperationMain = ({ match, history }) => {
     if (status === 409) {
       Swal.fire({
         title: 'Datos repetidos',
-        text:
-          'Este dato ya ha sido introducido en la primera visita. ¿Deseas actualizar la primera revision o agregarlo a la segunda revision?',
+        text: 'Este dato ya ha sido introducido ¿Deseas actualizar los datos?',
         icon: 'warning',
         showCancelButton: true,
-        showCloseButton: true,
         confirmButtonColor: '#3ed630',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Actualizar la primera revision',
-        cancelButtonText: 'Agregarlo como segunda revision',
+        confirmButtonText: 'Actualizar datos',
+        cancelButtonText: 'Cancelar',
       }).then((result) => {
         // console.log(result);
         if (result.value) {
           //actualizar data
           const data = formattingForm(form);
-          fetch(`${process.env.SERVER_IP}/api/data`, {
+          fetch(`${process.env.SERVER_IP}/api/operation`, {
             method: 'PUT',
             body: JSON.stringify(data),
             mode: 'cors',
@@ -257,7 +253,7 @@ const OperationMain = ({ match, history }) => {
               if (res.status === 202) {
                 Swal.fire({
                   icon: 'success',
-                  title: 'Datos de la primera revision actualizados',
+                  title: 'Datos actualizados',
                 });
               } else if (status === 500) {
                 Swal.fire({
@@ -278,83 +274,6 @@ const OperationMain = ({ match, history }) => {
               });
             });
         } else if (result.dismiss === 'cancel') {
-          //introducir en dataSecondary
-          const data = formattingForm(form);
-          fetch(`${process.env.SERVER_IP}/api/data/secondary`, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            mode: 'cors',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-          })
-            .then((res) => {
-              if (res.status === 201) {
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Datos de la segunda revision enviados',
-                });
-              } else if (res.status === 409) {
-                Swal.fire({
-                  title: 'Datos repetidos',
-                  text:
-                    'Este dato ya ha sido introducido en la segunda revision. ¿Deseas actualizar la segunda revision?',
-                  icon: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3ed630',
-                  cancelButtonColor: '#3085d6',
-                  confirmButtonText: 'Actualizar la segunda revision',
-                  cancelButtonText: 'Cancelar',
-                }).then((result) => {
-                  if (result.value) {
-                    fetch(`${process.env.SERVER_IP}/api/data/secondary`, {
-                      method: 'PUT',
-                      body: JSON.stringify(form),
-                      mode: 'cors',
-                      headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                      },
-                    })
-                      .then((res) => {
-                        if (res.status === 202) {
-                          Swal.fire({
-                            icon: 'success',
-                            title: 'Datos de la segunda revision actualizados',
-                          });
-                        }
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                        Swal.fire({
-                          icon: 'error',
-                          title: 'Error al enviar',
-                          text:
-                            'Hubo un error al enviar. Por favor, reporta el problema.',
-                        });
-                      });
-                  }
-                });
-              } else if (res.status === 500) {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error al enviar',
-                  text:
-                    'Hubo un error al enviar. Por favor, reporta el problema.',
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Error al enviar',
-                text:
-                  'Hubo un error al enviar. Por favor, reporta el problema.',
-              });
-            });
-        } else if (result.dismiss === 'close') {
           Swal.fire({
             title: 'Datos no enviados',
             icon: 'info',
@@ -384,7 +303,7 @@ const OperationMain = ({ match, history }) => {
     // console.log(user);
     // console.log(data);
     // alert(JSON.stringify(formattedForm));
-    fetch(`${process.env.SERVER_IP}/api/data`, {
+    fetch(`${process.env.SERVER_IP}/api/operation`, {
       method: 'POST',
       body: JSON.stringify(data),
       mode: 'cors',
@@ -408,7 +327,21 @@ const OperationMain = ({ match, history }) => {
   };
 
   const confirmSubmit = (e) => {
-    if (!approved) {
+    // const validation = validateGeneralData;
+    // if (validation) {
+    //   setApproved('Si') &&
+    //     setValues({
+    //       ...form,
+    //       aprobado: 'Si',
+    //     });
+    // } else {
+    //   setApproved('No') &&
+    //     setValues({
+    //       ...form,
+    //       aprobado: 'No',
+    //     });
+    // }
+    if (approved === 'No') {
       e.preventDefault();
       Swal.fire({
         title: 'Estas enviando datos no aprobados',
@@ -430,7 +363,7 @@ const OperationMain = ({ match, history }) => {
         }
       });
     }
-    if (approved) {
+    if (approved === 'Si') {
       e.preventDefault();
       Swal.fire({
         title: 'Estas a punto de enviar datos.',
@@ -463,7 +396,6 @@ const OperationMain = ({ match, history }) => {
       <header>
         <h2>Eficiencia de Equipo</h2>
         <p>{`${unit} ${match.params.unitnumber}`}</p>
-        <p>{refrigerant}</p>
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>
       <form>
@@ -547,7 +479,7 @@ const OperationMain = ({ match, history }) => {
           <button type='button' onClick={calculate}>
             Validar Datos
           </button>
-          {/* {readyToSend ? (
+          {readyToSend ? (
             <button type='submit' onClick={confirmSubmit}>
               Enviar
             </button>
@@ -555,7 +487,7 @@ const OperationMain = ({ match, history }) => {
             <p>
               Se requiere calcular y validar los datos antes de poder enviarlos
             </p>
-          )} */}
+          )}
         </div>
         <div className='percentage-check-container'>
           <h3>Porcentaje</h3>

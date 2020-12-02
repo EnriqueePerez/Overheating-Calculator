@@ -224,8 +224,8 @@ export const calculateDeltaAndTolerances = (
   evaporatorCycles,
   condenserCycles
 ) => {
-  const retorno = parseInt(retornoOriginal, 10);
-  const injection = parseInt(injectionOriginal, 10);
+  const retorno = parseFloat(retornoOriginal);
+  const injection = parseFloat(injectionOriginal);
   if (retorno > injection) {
     const percentageTolerance = Math.abs(
       evaporatorPercentage - condenserPercentage
@@ -246,11 +246,45 @@ export const calculateDeltaAndTolerances = (
       return 'No aprobado';
     };
 
+    console.log(retorno);
+    console.log(injection);
     const delta = (retorno - injection).toFixed(2);
+    console.log(delta);
 
     const caculatedValues = { percentageValue, cycleValue, delta };
 
     return caculatedValues;
   }
   return false;
+};
+
+export const validateGeneralData = () => {
+  const porcentajeEvaporador = document.getElementById('evaporatorPercentage')
+    .style.backgroundColor;
+  const ciclosEvaporador = document.getElementById('evaporatorCycles').style
+    .backgroundColor;
+  const porcentajeCondensador = document.getElementById('condenserPercentage')
+    .style.backgroundColor;
+  const ciclosCondensador = document.getElementById('condenserCycles').style
+    .backgroundColor;
+  const porcentajeCheck = document.getElementById('percentageCheck').style
+    .color;
+  const ciclosCheck = document.getElementById('cycleCheck').style.color;
+  const delta = document.getElementById('delta').style.color;
+
+  if (
+    porcentajeEvaporador === 'rgb(136, 252, 136)' &&
+    ciclosEvaporador === 'rgb(136, 252, 136)' &&
+    porcentajeCondensador === 'rgb(136, 252, 136)' &&
+    ciclosCondensador === 'rgb(136, 252, 136)' &&
+    porcentajeCheck === 'rgb(136, 252, 136)' &&
+    ciclosCheck === 'rgb(136, 252, 136)' &&
+    delta === 'rgb(136, 252, 136)'
+  ) {
+    // console.log('aprobado');
+    return true;
+  }
+  // console.log('no aprobado');
+  return false;
+  // console.log(delta);
 };
