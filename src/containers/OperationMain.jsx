@@ -420,7 +420,7 @@ const OperationMain = ({ match, history }) => {
             placeholder='°C'
             type='number'
             onChange={handleInput}
-            inputMode='numeric'
+            inputMode='text'
           />
         </div>
         <div className='field-container'>
@@ -431,7 +431,7 @@ const OperationMain = ({ match, history }) => {
             placeholder='°C'
             type='number'
             onChange={handleInput}
-            inputMode='numeric'
+            inputMode='text'
           />
         </div>
         {secondReturn ? (
@@ -444,7 +444,7 @@ const OperationMain = ({ match, history }) => {
                 placeholder='°C'
                 type='number'
                 onChange={handleInput}
-                inputMode='numeric'
+                inputMode='text'
               />
             </div>
             <div className='field-container'>
@@ -455,7 +455,7 @@ const OperationMain = ({ match, history }) => {
                 placeholder='°C'
                 type='number'
                 onChange={handleInput}
-                inputMode='numeric'
+                inputMode='text'
               />
             </div>
           </>
