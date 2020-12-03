@@ -219,6 +219,8 @@ export const validateCycles = (cycles) => {
 export const calculateDeltaAndTolerances = (
   retornoOriginal,
   injectionOriginal,
+  retorno2Original,
+  injection2Original,
   evaporatorPercentage,
   condenserPercentage,
   evaporatorCycles,
@@ -226,10 +228,36 @@ export const calculateDeltaAndTolerances = (
 ) => {
   const retorno = parseFloat(retornoOriginal);
   const injection = parseFloat(injectionOriginal);
+  const retorno2 = parseFloat(retorno2Original);
+  const injection2 = parseFloat(injection2Original);
   if (retorno > injection) {
+    // console.log(retorno);
+    // console.log(injection);
+    // console.log(retorno2);
+    // console.log(injection2);
+    if (!(retorno2 === 0 && injection2 === 0)) {
+      //retorno 2 y injection 2 estan disponibles, es decir, los campos se estan rellenando
+      if (retorno2 <= injection2) {
+        return false;
+      }
+    }
+    const averageDeltas = () => {
+      if (!(retorno2 === 0 && injection2 === 0)) {
+        //retorno 2 y injection 2 estan disponibles, es decir, los campos se estan rellenando
+        // console.log('entre');
+        const delta1 = retorno - injection;
+        const delta2 = retorno2 - injection2;
+        const deltaAverages = ((delta1 + delta2) / 2).toFixed(2);
+        return deltaAverages; //delta average
+      }
+      const delta = (retorno - injection).toFixed(2);
+      return delta;
+    };
+
     const percentageTolerance = Math.abs(
       evaporatorPercentage - condenserPercentage
     );
+
     const cycleTolerance = Math.abs(evaporatorCycles - condenserCycles);
 
     const percentageValue = () => {
@@ -246,10 +274,9 @@ export const calculateDeltaAndTolerances = (
       return 'No aprobado';
     };
 
-    console.log(retorno);
-    console.log(injection);
-    const delta = (retorno - injection).toFixed(2);
-    console.log(delta);
+    const delta = averageDeltas();
+    // console.log(retorno);
+    // console.log(injection);
 
     const caculatedValues = { percentageValue, cycleValue, delta };
 

@@ -26,11 +26,14 @@ const OperationMain = ({ match, history }) => {
   const [delta, setDelta] = useState(0);
   const [approved, setApproved] = useState('No');
   const [readyToSend, setReadyToSend] = useState(false);
+  const [secondReturn, setsecondReturn] = useState(false);
   const [form, setValues] = useState({
     comentarios: 'Sin comentarios',
     aprobado: 'No',
     retorno: undefined,
     inyeccion: undefined,
+    retorno2: '0',
+    inyeccion2: '0',
     porcentaje_evaporador: undefined,
     ciclos_evaporador: undefined,
     porcentaje_condensador: undefined,
@@ -101,7 +104,16 @@ const OperationMain = ({ match, history }) => {
     }
   };
 
+  const enableSecondReturn = () => {
+    if (
+      `${match.params.unit} ${match.params.unitnumber}` === 'Conservacion 2'
+    ) {
+      setsecondReturn(true);
+    }
+  };
+
   useEffect(() => {
+    enableSecondReturn();
     handleUserInput();
     percentageAndCycleCheck();
     validateDelta();
@@ -163,20 +175,28 @@ const OperationMain = ({ match, history }) => {
         icon: 'error',
       });
     } else {
+      if (secondReturn && (form.retorno2 === '' || form.inyeccion2 === '')) {
+        Swal.fire({
+          title: 'Faltan campos por rellenar',
+          icon: 'error',
+        });
+      }
       const operation = calculateDeltaAndTolerances(
         form.retorno,
         form.inyeccion,
+        form.retorno2,
+        form.inyeccion2,
         form.porcentaje_evaporador,
         form.porcentaje_condensador,
         form.ciclos_evaporador,
         form.ciclos_condensador
       );
-      console.log(operation);
-      console.log(form);
+      // console.log(operation);
+      // console.log(form);
       if (operation === false) {
         setReadyToSend(false);
         Swal.fire({
-          title: 'El retorno no puede ser menor que la inyección',
+          title: 'El retorno no puede ser menor o igual que la inyección',
           icon: 'error',
         });
       } else {
@@ -192,17 +212,6 @@ const OperationMain = ({ match, history }) => {
         });
         setReadyToSend(true);
       }
-
-      // const operation = calculation(
-      //   refrigerant,
-      //   form.presion_succion,
-      //   // eslint-disable-next-line comma-dangle
-      //   form.resistencia_pt1000
-      // );
-      // operation &&
-      //   (setSaturationTemperature(operation.saturationTemp),
-      //   setTubeTemperature(operation.tubeTemp),
-      //   setOverheatingTemperature(operation.overheatTemp));
     }
   };
 
@@ -212,6 +221,8 @@ const OperationMain = ({ match, history }) => {
       aprobado: form.aprobado,
       retorno: form.retorno,
       inyeccion: form.inyeccion,
+      retorno2: form.retorno2,
+      inyeccion2: form.inyeccion2,
       porcentaje_evaporador: form.porcentaje_evaporador,
       ciclos_evaporador: form.ciclos_evaporador,
       porcentaje_condensador: form.porcentaje_condensador,
@@ -300,6 +311,7 @@ const OperationMain = ({ match, history }) => {
     // generalValidation();
     // e.preventDefault();
     const data = formattingForm(form);
+    // console.log(form);
     // console.log(user);
     // console.log(data);
     // alert(JSON.stringify(formattedForm));
@@ -404,7 +416,7 @@ const OperationMain = ({ match, history }) => {
           <h3>Sensor de Retorno</h3>
           <input
             name='retorno'
-            id='retorno'
+            id='retorno1'
             placeholder='°C'
             type='number'
             onChange={handleInput}
@@ -415,13 +427,40 @@ const OperationMain = ({ match, history }) => {
           <h3>Sensor de Inyección</h3>
           <input
             name='inyeccion'
-            id='inyeccion'
+            id='inyeccion1'
             placeholder='°C'
             type='number'
             onChange={handleInput}
             inputMode='decimal'
           />
         </div>
+        {secondReturn ? (
+          <>
+            <div className='field-container'>
+              <h3>Sensor de Retorno 2</h3>
+              <input
+                name='retorno2'
+                id='retorno2'
+                placeholder='°C'
+                type='number'
+                onChange={handleInput}
+                inputMode='decimal'
+              />
+            </div>
+            <div className='field-container'>
+              <h3>Sensor de Inyección 2</h3>
+              <input
+                name='inyeccion2'
+                id='inyeccion2'
+                placeholder='°C'
+                type='number'
+                onChange={handleInput}
+                inputMode='decimal'
+              />
+            </div>
+          </>
+        ) : null}
+
         <h2>Evaporador</h2>
         <div className='field-container'>
           <h3>Porcentaje</h3>
