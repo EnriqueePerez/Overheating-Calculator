@@ -418,7 +418,7 @@ const OperationMain = ({ match, history }) => {
             name='retorno'
             id='retorno1'
             placeholder='°C'
-            type='number'
+            type='text'
             onChange={handleInput}
             inputMode='text'
           />
@@ -429,7 +429,7 @@ const OperationMain = ({ match, history }) => {
             name='inyeccion'
             id='inyeccion1'
             placeholder='°C'
-            type='number'
+            type='text'
             onChange={handleInput}
             inputMode='text'
           />
@@ -442,7 +442,7 @@ const OperationMain = ({ match, history }) => {
                 name='retorno2'
                 id='retorno2'
                 placeholder='°C'
-                type='number'
+                type='text'
                 onChange={handleInput}
                 inputMode='text'
               />
@@ -453,7 +453,7 @@ const OperationMain = ({ match, history }) => {
                 name='inyeccion2'
                 id='inyeccion2'
                 placeholder='°C'
-                type='number'
+                type='text'
                 onChange={handleInput}
                 inputMode='text'
               />
