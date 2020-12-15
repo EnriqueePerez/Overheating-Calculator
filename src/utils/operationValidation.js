@@ -261,14 +261,32 @@ export const calculateDeltaAndTolerances = (
     const cycleTolerance = Math.abs(evaporatorCycles - condenserCycles);
 
     const percentageValue = () => {
-      if (percentageTolerance <= 1) {
+      const porcentajeEvaporador = document.getElementById(
+        'evaporatorPercentage'
+      ).style.backgroundColor;
+      const porcentajeCondensador = document.getElementById(
+        'condenserPercentage'
+      ).style.backgroundColor;
+      if (
+        percentageTolerance <= 1 &&
+        porcentajeEvaporador === 'rgb(136, 252, 136)' &&
+        porcentajeCondensador === 'rgb(136, 252, 136)'
+      ) {
         return 'Aprobado';
       }
       return 'No aprobado';
     };
 
     const cycleValue = () => {
-      if (cycleTolerance <= 2) {
+      const ciclosEvaporador = document.getElementById('evaporatorCycles').style
+        .backgroundColor;
+      const ciclosCondensador = document.getElementById('condenserCycles').style
+        .backgroundColor;
+      if (
+        cycleTolerance <= 2 &&
+        ciclosEvaporador === 'rgb(136, 252, 136)' &&
+        ciclosCondensador === 'rgb(136, 252, 136)'
+      ) {
         return 'Aprobado';
       }
       return 'No aprobado';
