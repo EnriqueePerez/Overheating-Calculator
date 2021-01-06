@@ -20,7 +20,7 @@ const Home = (props) => {
       </div>
       <div className='buttons-container'>
         <Link to='/operation'>
-          <button type='submit'>Eficiencia de Equipo</button>
+          <button type='submit'>Eficiencia de Trabajo</button>
         </Link>
         <Link to='/overheating'>
           <button style={{ fontSize: '1.2em' }} type='submit'>

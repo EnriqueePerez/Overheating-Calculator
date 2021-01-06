@@ -15,7 +15,7 @@ const SecondChoice = ({ match, history }) => {
       </div>
       <Title title='Sobrecalentamiento' />
       <div className='title-container'>
-        <h1>Número de unidad</h1>
+        <h1>Número de evaporador</h1>
       </div>
       <div className='buttons-container'>
         <Link to={`/overheating/refrigerant/${match.params.unit}/1`}>

@@ -406,7 +406,7 @@ const OperationMain = ({ match, history }) => {
         <UserInfo />
       </div>
       <header>
-        <h2>Eficiencia de Equipo</h2>
+        <h2>Eficiencia de Trabajo</h2>
         <p>{`${unit} ${match.params.unitnumber}`}</p>
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>
@@ -540,9 +540,17 @@ const OperationMain = ({ match, history }) => {
             {cyclesCheck}
           </p>
         </div>
-        <div className='delta-container'>
-          <h2>Delta</h2>
+        <div className='cycle-check-container'>
+          <h3>Delta</h3>
           <p id='delta'>{delta}</p>
+        </div>
+        <div className='unit-status'>
+          <h2>Estado del Equipo</h2>
+          {approved === 'No' ? (
+            <p style={{ color: '#fa6b6b' }}>Fuera de especificación</p>
+          ) : (
+            <p style={{ color: '#88fc88' }}>Aprobado</p>
+          )}
         </div>
       </form>
     </>

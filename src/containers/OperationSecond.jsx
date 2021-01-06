@@ -13,9 +13,9 @@ const OperationSecond = ({ match }) => {
         <Navigation />
         <UserInfo />
       </div>
-      <Title title='Eficiencia de Equipo' />
+      <Title title='Eficiencia de Trabajo' />
       <div className='title-container'>
-        <h1>Número de unidad</h1>
+        <h1>Número de evaporador</h1>
       </div>
       <div className='buttons-container'>
         <Link to={`/operation/stores/${match.params.unit}/1`}>
