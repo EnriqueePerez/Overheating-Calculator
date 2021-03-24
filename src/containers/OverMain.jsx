@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
+import { gql, GraphQLClient } from 'graphql-request';
 import '../assets/styles/components/OverMain.scss';
 import Swal from 'sweetalert2';
+import { useUser } from 'reactfire';
+import 'firebase/auth';
 import {
   validateStopPressure,
   validateStartPressure,
   calculation,
   validateOverheatingTemperature,
+  parseUnit,
 } from '../utils/overValidation';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
-import { verifyUser } from '../utils/userContext';
 
 const Main = ({ match, history }) => {
-  const [user, setUser] = useState(9);
+  let duplicatedId;
+  const user = useUser();
+  const [userId, setUserId] = useState(9);
   const [unit, setUnit] = useState('Sin Unidad');
   const [refrigerant, setRefrigerant] = useState('Sin Refrigerante');
   const [store, setStore] = useState('Sin tienda');
   const [storeCr, setStoreCr] = useState('');
-  // /?unit=conservacion&refrigerant=R404a
 
   const [tubeTemperature, setTubeTemperature] = useState(0);
   const [saturationTemperature, setSaturationTemperature] = useState(0);
   const [overheatingTemperature, setOverheatingTemperature] = useState(0);
-  const [approved, setApproved] = useState(0);
+  const [approved, setApproved] = useState('No');
   const [readyToSend, setReadyToSend] = useState(false);
   const [form, setValues] = useState({
     comentarios: 'Sin comentarios',
@@ -40,6 +43,9 @@ const Main = ({ match, history }) => {
     CR: 'AAA',
     id_usuario: 9,
   });
+  const graphQLClient = new GraphQLClient(`${process.env.SERVER_IP}/api`, {
+    mode: 'cors',
+  });
 
   const generalValidation = () => {
     if (
@@ -49,10 +55,10 @@ const Main = ({ match, history }) => {
         'rgb(136, 252, 136)' &&
       document.getElementById('overheatingTemp').style.color === 'green'
     ) {
-      setApproved(1);
+      setApproved('Si');
       // console.log(approved);
     } else {
-      setApproved(0);
+      setApproved('No');
       // console.log(approved);
     }
     setValues({
@@ -61,23 +67,40 @@ const Main = ({ match, history }) => {
     });
   };
 
-  const handleUserInput = (e) => {
-    verifyUser()
-      .then((r) => {
-        setUser(r.user.id);
+  const handleUserInput = async (e) => {
+    const query = gql`
+      query searchingUser($email: String!) {
+        getUsuario(email: $email) {
+          id
+        }
+      }
+    `;
+
+    const variables = {
+      email: user.data.email,
+    };
+
+    await graphQLClient
+      .request(query, variables)
+      .then((data) => {
+        // console.log(JSON.stringify(data, undefined, 2));
+        // console.log('data.getUsuarios', typeof data.getUsuario.id);
+        setUserId(parseInt(data.getUsuario.id, 10));
       })
-      .catch(() => console.log('No Autenticado'));
-    // const index = e.target.selectedIndex; //Getting the index of the selected element
-    // const optionElement = e.target.childNodes[index]; //Getting the html line of the element;
-    // const id = optionElement.getAttribute('id'); //Getting the id attribute from the HTML line
-    // // console.log(id);
-    // setUser(id);
+      .catch((error) => {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error interno',
+          text: 'Por favor, reporta el problema',
+        });
+      });
   };
 
   useEffect(() => {
     handleUserInput();
     validateOverheatingTemperature(overheatingTemperature, unit);
-    setUnit(match.params.unit);
+    setUnit(parseUnit(match.params.unit, match.params.unitnumber));
     setRefrigerant(match.params.refrigerant);
     setStoreCr(match.params.storecr);
     setStore(match.params.store);
@@ -133,10 +156,10 @@ const Main = ({ match, history }) => {
         temp_saturacion: operation.saturationTemp,
         temp_tubo: operation.tubeTemp,
         temp_sobrecalentamiento: operation.overheatTemp,
-        unidad: `${unit} ${match.params.unitnumber}`,
+        unidad: unit,
         refrigerante: refrigerant,
         CR: storeCr,
-        id_usuario: user,
+        id_usuario: userId,
       });
       setReadyToSend(true);
     }
@@ -144,26 +167,171 @@ const Main = ({ match, history }) => {
 
   const formattingForm = (form) => {
     const formattedForm = {
-      comentarios: form.comentarios,
-      aprobado: form.aprobado,
-      presion_arranque: form.presion_arranque,
-      presion_paro: form.presion_paro,
-      presion_succion: form.presion_succion,
-      resistencia_pt1000: form.resistencia_pt1000,
-      temp_saturacion: form.temp_saturacion,
-      temp_tubo: form.temp_tubo,
-      temp_sobrecalentamiento: form.temp_sobrecalentamiento,
-      unidad: form.unidad,
-      refrigerante: form.refrigerante,
       CR: form.CR,
       id_usuario: form.id_usuario,
-      temp_ambiente: form.temp_ambiente,
+      unidad: form.unidad,
+      refrigerante: form.refrigerante,
+      presion_arranque: parseFloat(form.presion_arranque),
+      presion_paro: parseFloat(form.presion_paro),
+      presion_succion: parseFloat(form.presion_succion),
+      resistencia_pt1000: parseFloat(form.resistencia_pt1000),
+      temp_tubo: form.temp_tubo,
+      temp_saturacion: form.temp_saturacion,
+      temp_sobrecalentamiento: form.temp_sobrecalentamiento,
+      temp_ambiente: parseFloat(form.temp_ambiente),
+      aprobado: form.aprobado,
+      comentarios: form.comentarios,
     };
     return formattedForm;
   };
 
-  const validatingResponse = (status) => {
-    if (status === 409) {
+  const sendOverheating = async (update, collection, id) => {
+    //ordering and formatting the data
+    const data = formattingForm(form);
+    // console.log(data);
+
+    const queryToSend = gql`
+      mutation sendOverheating(
+        $input: SobrecalentamientoInput!
+        $collection: String!
+      ) {
+        addSobrecalentamiento(input: $input, collection: $collection) {
+          id
+          fecha_hora
+        }
+      }
+    `;
+
+    const queryToUpdate = gql`
+      mutation updateOverheating(
+        $input: SobrecalentamientoInput!
+        $collection: String!
+        $id: String!
+      ) {
+        updateSobrecalentamiento(
+          input: $input
+          collection: $collection
+          id: $id
+        ) {
+          id
+          fecha_hora
+        }
+      }
+    `;
+
+    const variablesToSend = {
+      input: data,
+      collection,
+    };
+
+    const variablesToUpdate = {
+      input: data,
+      collection,
+      id,
+    };
+
+    await graphQLClient
+      .request(
+        update ? queryToUpdate : queryToSend,
+        // eslint-disable-next-line comma-dangle
+        update ? variablesToUpdate : variablesToSend
+      )
+      .then((data) => {
+        // console.log(JSON.stringify(data, undefined, 2));
+        if (update) {
+          if (collection === 'sobrecalentamientos') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Datos de la primera revision actualizados',
+            });
+          } else {
+            Swal.fire({
+              icon: 'success',
+              title: 'Datos de la segunda revision actualizados',
+            });
+          }
+        } else {
+          if (collection === 'sobrecalentamientos') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Datos enviados',
+            });
+          } else {
+            Swal.fire({
+              icon: 'success',
+              title: 'Datos de la segunda revision enviados',
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al enviar',
+          text: 'Hubo un error al enviar. Por favor, reporta el problema.',
+        });
+      });
+  };
+
+  const avoidingDuplicate = async (collection) => {
+    const query = gql`
+      query validatingOverheating(
+        $storeCR: String!
+        $unit: String!
+        $collection: String!
+      ) {
+        getSobrecalentamientoForValidation(
+          storeCR: $storeCR
+          unit: $unit
+          collection: $collection
+        ) {
+          id
+          temp_sobrecalentamiento
+        }
+      }
+    `;
+
+    const variables = {
+      storeCR: storeCr,
+      unit,
+      collection,
+    };
+
+    const duplicated = await graphQLClient
+      .request(query, variables)
+      .then((data) => {
+        // console.log(JSON.stringify(data, undefined, 2));
+        if (
+          data.getSobrecalentamientoForValidation.temp_sobrecalentamiento ===
+          null
+        ) {
+          console.log('dato no repetido');
+          return false;
+        }
+        console.log('dato repetido');
+        duplicatedId = data.getSobrecalentamientoForValidation.id;
+        // console.log('duplicatedId', duplicatedId);
+        return true;
+      })
+      .catch((error) => {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error interno',
+          text: 'Por favor, reporta el problema',
+        });
+      });
+    setReadyToSend(false);
+    return duplicated;
+  };
+
+  const sendData = async (e) => {
+    const firstCollection = 'sobrecalentamientos';
+    const secondCollection = 'SobrecalentamientosAdicionales';
+
+    //checking if the data it is not duplicated in firstCollection
+    if (await avoidingDuplicate(firstCollection)) {
       Swal.fire({
         title: 'Datos repetidos',
         text:
@@ -175,121 +343,38 @@ const Main = ({ match, history }) => {
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Actualizar la primera revision',
         cancelButtonText: 'Agregarlo como segunda revision',
-      }).then((result) => {
-        // console.log(result);
+      }).then(async (result) => {
         if (result.value) {
-          //actualizar data
-          const data = formattingForm(form);
-          fetch(`${process.env.SERVER_IP}/api/data`, {
-            method: 'PUT',
-            body: JSON.stringify(data),
-            mode: 'cors',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-          })
-            .then((res) => {
-              if (res.status === 202) {
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Datos de la primera revision actualizados',
-                });
-              } else if (status === 500) {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error al enviar',
-                  text:
-                    'Hubo un error al enviar. Por favor, reporta el problema.',
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Error al enviar',
-                text:
-                  'Hubo un error al enviar. Por favor, reporta el problema.',
-              });
-            });
+          //updateOverheating in firstCollection
+          sendOverheating(true, firstCollection, duplicatedId);
         } else if (result.dismiss === 'cancel') {
-          //introducir en dataSecondary
-          const data = formattingForm(form);
-          fetch(`${process.env.SERVER_IP}/api/data/secondary`, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            mode: 'cors',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-          })
-            .then((res) => {
-              if (res.status === 201) {
+          //checking if the data it is not duplicated in secondCollection
+          if (await avoidingDuplicate(secondCollection)) {
+            Swal.fire({
+              title: 'Datos repetidos',
+              text:
+                'Este dato ya ha sido introducido en la segunda revision. ¿Deseas actualizar la segunda revision?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3ed630',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Actualizar la segunda revision',
+              cancelButtonText: 'Cancelar',
+            }).then((result) => {
+              if (result.value) {
+                //updateOverheating in secondCollection
+                sendOverheating(true, secondCollection, duplicatedId);
+              } else if (result.dismiss === 'cancel') {
                 Swal.fire({
-                  icon: 'success',
-                  title: 'Datos de la segunda revision enviados',
-                });
-              } else if (res.status === 409) {
-                Swal.fire({
-                  title: 'Datos repetidos',
-                  text:
-                    'Este dato ya ha sido introducido en la segunda revision. ¿Deseas actualizar la segunda revision?',
-                  icon: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3ed630',
-                  cancelButtonColor: '#3085d6',
-                  confirmButtonText: 'Actualizar la segunda revision',
-                  cancelButtonText: 'Cancelar',
-                }).then((result) => {
-                  if (result.value) {
-                    fetch(`${process.env.SERVER_IP}/api/data/secondary`, {
-                      method: 'PUT',
-                      body: JSON.stringify(form),
-                      mode: 'cors',
-                      headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                      },
-                    })
-                      .then((res) => {
-                        if (res.status === 202) {
-                          Swal.fire({
-                            icon: 'success',
-                            title: 'Datos de la segunda revision actualizados',
-                          });
-                        }
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                        Swal.fire({
-                          icon: 'error',
-                          title: 'Error al enviar',
-                          text:
-                            'Hubo un error al enviar. Por favor, reporta el problema.',
-                        });
-                      });
-                  }
-                });
-              } else if (res.status === 500) {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error al enviar',
-                  text:
-                    'Hubo un error al enviar. Por favor, reporta el problema.',
+                  title: 'Datos no enviados',
+                  icon: 'info',
                 });
               }
-            })
-            .catch((error) => {
-              console.log(error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Error al enviar',
-                text:
-                  'Hubo un error al enviar. Por favor, reporta el problema.',
-              });
             });
+          } else {
+            //sendOverheating in secondCollection
+            sendOverheating(false, secondCollection);
+          }
         } else if (result.dismiss === 'close') {
           Swal.fire({
             title: 'Datos no enviados',
@@ -297,54 +382,14 @@ const Main = ({ match, history }) => {
           });
         }
       });
-    } else if (status === 201) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Datos enviados',
-      });
-    } else if (status === 500) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al enviar',
-        text:
-          'Hubo un error interno al enviar. Por favor, reporta el problema.',
-      });
+    } else {
+      //sendOverheating in firstCollection
+      sendOverheating(false, firstCollection);
     }
   };
 
-  const sendData = (e) => {
-    //When send, turn off button
-    // generalValidation();
-    // e.preventDefault();
-    const data = formattingForm(form);
-    // console.log(user);
-    // console.log(data);
-    // alert(JSON.stringify(formattedForm));
-    fetch(`${process.env.SERVER_IP}/api/data`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        validatingResponse(res.status);
-      })
-      .catch((error) => {
-        console.log(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al enviar',
-          text: 'Hubo un error al enviar. Por favor, reporta el problema.',
-        });
-      });
-    setReadyToSend(false);
-  };
-
   const confirmSubmit = (e) => {
-    if (!approved) {
+    if (approved === 'No') {
       e.preventDefault();
       Swal.fire({
         title: 'Estas enviando datos no aprobados',
@@ -357,7 +402,7 @@ const Main = ({ match, history }) => {
         cancelButtonText: 'No enviar',
       }).then((result) => {
         if (result.value) {
-          sendData(e);
+          sendData();
         } else {
           Swal.fire({
             title: 'Datos no enviados',
@@ -366,7 +411,7 @@ const Main = ({ match, history }) => {
         }
       });
     }
-    if (approved) {
+    if (approved === 'Si') {
       e.preventDefault();
       Swal.fire({
         title: 'Estas a punto de enviar datos.',
@@ -379,7 +424,7 @@ const Main = ({ match, history }) => {
         cancelButtonText: 'No enviar',
       }).then((result) => {
         if (result.value) {
-          sendData(e);
+          sendData();
         } else {
           Swal.fire({
             title: 'Datos no enviados',
@@ -391,7 +436,7 @@ const Main = ({ match, history }) => {
   };
 
   return (
-    //eliminate user id form and add ambient temperature, then add screen to change pass
+    //eliminate userId id form and add ambient temperature, then add screen to change pass
     <>
       <div className='navigationContainer'>
         <Navigation />
@@ -399,7 +444,7 @@ const Main = ({ match, history }) => {
       </div>
       <header>
         <h2>Calculadora de sobrecalentamiento</h2>
-        <p>{`${unit} ${match.params.unitnumber}`}</p>
+        <p>{unit}</p>
         <p>{refrigerant}</p>
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>

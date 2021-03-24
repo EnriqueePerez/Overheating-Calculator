@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-// import axios from 'axios';
+import 'firebase/auth';
+import { useFirebaseApp } from 'reactfire';
 import swal from 'sweetalert2';
 import Header from '../components/Header';
-import { login } from '../utils/userContext';
 import '../assets/styles/components/Login.scss';
 
 const Login = (props) => {
   const [form, setValues] = useState();
+  const firebase = useFirebaseApp();
 
   const cleanForm = () => {
     document.getElementById('email').value = '';
@@ -16,27 +17,55 @@ const Login = (props) => {
   const handleLogin = async (e) => {
     // console.log(btoa(utf8.encode(`${form.email}:${form.password}`)));
     e.preventDefault();
-    login(form.email, form.password)
-      .then((r) => {
-        console.log(r);
-        if (r === 202) {
-          props.history.push('/');
-        }
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(form.email, form.password)
+      .then((userCredentials) => {
+        const { user } = userCredentials;
+        props.history.push('/');
+        // user.updateProfile({
+        //   displayName: 'Enrique Perez',
+        // });
+        console.log('aqui esta el usuario', user);
       })
-      .catch((e) => {
-        console.log(e);
-        if (e === 401) {
+      .catch((err) => {
+        console.log(err.code, err.message);
+        if (
+          err.code === 'auth/wrong-password' ||
+          err.code === 'auth/user-not-found)'
+        ) {
           swal.fire({
             icon: 'error',
             title: 'Contraseña o usuario incorrectos',
           });
-        } else if (e === 500) {
+        } else {
           swal.fire({
             icon: 'error',
-            title: 'Hubo un error en la autenticación',
+            title: 'Por favor reporta el problema',
           });
         }
       });
+    // login(form.email, form.password)
+    //   .then((r) => {
+    //     console.log(r);
+    //     if (r === 202) {
+    //       props.history.push('/');
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //     if (e === 401) {
+    //       swal.fire({
+    //         icon: 'error',
+    //         title: 'Contraseña o usuario incorrectos',
+    //       });
+    //     } else if (e === 500) {
+    //       swal.fire({
+    //         icon: 'error',
+    //         title: 'Hubo un error en la autenticación',
+    //       });
+    //     }
+    //   });
     cleanForm();
   };
 

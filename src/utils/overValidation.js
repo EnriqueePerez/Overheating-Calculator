@@ -198,3 +198,14 @@ export const calculation = (refrigerant, pressure, resistance) => {
     }
   }
 };
+
+export const parseUnit = (unit, unitNumber) => {
+  switch (unit) {
+    case 'Conservacion':
+      return `Conservación ${unitNumber}`;
+    case 'Hielo':
+      return 'Hielo';
+    case 'Cerveza':
+      return 'Cerveza';
+  }
+};

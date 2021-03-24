@@ -12,9 +12,12 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
+    "firebase": "^8.3.0",
+    "graphql-request": "^3.4.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
+    "reactfire": "^3.0.0-rc.0",
     "sweetalert2": "^9.17.1"
   },
   "devDependencies": {

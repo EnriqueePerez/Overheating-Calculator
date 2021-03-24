@@ -1,19 +1,28 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useEffect, useState } from 'react';
+import { useUser, useFirebaseApp } from 'reactfire';
+import 'firebase/auth';
 import { Link, useHistory } from 'react-router-dom';
-import { verifyUser, logout } from '../utils/userContext';
 import '../assets/styles/components/userInfo.scss';
 
 const UserInfo = () => {
   const history = useHistory();
-  const [user, setUser] = useState(null);
+  const firebase = useFirebaseApp();
+  const user = useUser();
+  // const [user, setUser] = useState(null);
   const [greeting, setGreeting] = useState('sin horario');
   const [showMenu, setShowMenuBar] = useState(false);
 
-  const redirectToLogout = () => {
-    logout()
-      .then(() => window.location.reload())
-      .catch(() => history.push('/login'));
+  const redirectToLogout = async () => {
+    await firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        history.push('/login');
+      })
+      .catch(() => {
+        history.push('/login');
+      });
   };
 
   const checkTime = () => {
@@ -33,15 +42,15 @@ const UserInfo = () => {
 
   useEffect(() => {
     // setShowMenuBar(true);
-    if (user === null) {
-      checkTime();
-      verifyUser()
-        .then((r) => {
-          setUser(r.user.name);
-          // console. log(r.user.name);
-        })
-        .catch(() => history.push('/login'));
-    }
+    checkTime();
+    // firebase.auth().onAuthStateChanged((user) => {
+    //   if (user) {
+    //     // console.log('el usuario existe, aqui esta', user);
+    //   } else {
+    //     history.push('/login');
+    //     console.error('el usuario no existe');
+    //   }
+    // });
   }, []);
 
   return (
@@ -49,7 +58,7 @@ const UserInfo = () => {
       <div className='userContainer' onClick={() => setShowMenuBar(!showMenu)}>
         <p>
           {greeting}
-          {user}
+          {user.data === null ? 'Sin usuario' : user.data.displayName}
         </p>
         {showMenu ? (
           <div className='extraInfo'>
