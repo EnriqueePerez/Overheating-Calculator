@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { gql, GraphQLClient } from 'graphql-request';
 import Swal from 'sweetalert2';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
@@ -7,41 +8,70 @@ import '../assets/styles/components/Choices.scss';
 
 const OperationThird = (props) => {
   const { match } = props;
-  // console.log(match);
   const [stores, setStores] = useState([
-    { CR: '', nombre: 'Cargando tiendas' },
+    { id: '', nombre: 'Cargando tiendas' },
   ]);
   const [selectedStore, setSelectedStore] = useState('Selecciona la tienda');
   const [selectedStoreCR, setSelectedStoreCR] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetch(`${process.env.SERVER_IP}/api/stores`, {
-        method: 'GET',
+      const graphQLClient = new GraphQLClient(`${process.env.SERVER_IP}/api`, {
         mode: 'cors',
-      })
-        .then((res) => {
-          return res.json();
-        })
+      });
+
+      const query = gql`
+        {
+          getTiendas {
+            id
+            nombre
+          }
+        }
+      `;
+
+      await graphQLClient
+        .request(query)
         .then((data) => {
-          // console.log(data[0].nombre);
-          return data;
+          // console.log(JSON.stringify(data, undefined, 2));
+          setStores(data.getTiendas);
         })
-        .catch((err) => {
-          console.log(err);
-          alert(
-            // eslint-disable-next-line comma-dangle
-            'Hubo un error cargando las tiendas. Por favor, intenta mas tarde o reporta el problema'
-          );
+        .catch((error) => {
+          console.error(error);
           Swal.fire({
             icon: 'error',
             title: 'Error al cargar las tiendas',
             text: 'Por favor, intenta mas tarde o reporta el problema',
           });
         });
-      setStores(result);
     };
     fetchData();
+    // const fetchData = async () => {
+    //   const result = await fetch(`${process.env.SERVER_IP}/api/stores`, {
+    //     method: 'GET',
+    //     mode: 'cors',
+    //   })
+    //     .then((res) => {
+    //       return res.json();
+    //     })
+    //     .then((data) => {
+    //       // console.log(data[0].nombre);
+    //       return data;
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       alert(
+    //         // eslint-disable-next-line comma-dangle
+    //         'Hubo un error cargando las tiendas. Por favor, intenta mas tarde o reporta el problema'
+    //       );
+    //       Swal.fire({
+    //         icon: 'error',
+    //         title: 'Error al cargar las tiendas',
+    //         text: 'Por favor, intenta mas tarde o reporta el problema',
+    //       });
+    //     });
+    //   setStores(result);
+    // };
+    // fetchData();
   }, []);
 
   const handleSelection = (e) => {
@@ -78,7 +108,7 @@ const OperationThird = (props) => {
           <select defaultValue={selectedStore} onChange={handleSelection}>
             <option>{selectedStore}</option>
             {stores.map((store) => (
-              <option key={store.CR} id={store.CR} value={store.nombre}>
+              <option key={store.id} id={store.id} value={store.nombre}>
                 {store.nombre}
               </option>
             ))}

@@ -1,23 +1,26 @@
+/* eslint-disable operator-linebreak */
 import React, { useState, useEffect } from 'react';
+import { gql, GraphQLClient } from 'graphql-request';
 import '../assets/styles/components/OperationMain.scss';
 import Swal from 'sweetalert2';
+import { useUser } from 'reactfire';
 import {
   validatePercentage,
   validateCycles,
   calculateDeltaAndTolerances,
   validateGeneralData,
+  parseUnit,
 } from '../utils/operationValidation';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
-import { verifyUser } from '../utils/userContext';
 
 const OperationMain = ({ match, history }) => {
-  const [user, setUser] = useState(9);
+  let duplicatedId;
+  const user = useUser();
+  const [userId, setUserId] = useState(9);
   const [unit, setUnit] = useState('Sin Unidad');
   const [store, setStore] = useState('Sin tienda');
   const [storeCr, setStoreCr] = useState('');
-  // /?unit=conservacion&refrigerant=R404a
-
   const [percentageCheck, setPercentageCheck] = useState(
     // eslint-disable-next-line comma-dangle
     'Esperando Validación'
@@ -43,6 +46,9 @@ const OperationMain = ({ match, history }) => {
     CR: 'AAA',
     id_usuario: 9,
   });
+  const graphQLClient = new GraphQLClient(`${process.env.SERVER_IP}/api`, {
+    mode: 'cors',
+  });
 
   const generalValidation = () => {
     const validation = validateGeneralData();
@@ -59,12 +65,39 @@ const OperationMain = ({ match, history }) => {
     });
   };
 
-  const handleUserInput = (e) => {
-    verifyUser()
-      .then((r) => {
-        setUser(r.user.id);
+  const handleUserInput = async () => {
+    const query = gql`
+      query searchingUser($email: String!) {
+        getUsuario(email: $email) {
+          id
+        }
+      }
+    `;
+
+    const variables = {
+      email: user.data.email,
+    };
+
+    await graphQLClient
+      .request(query, variables)
+      .then((data) => {
+        // console.log(JSON.stringify(data, undefined, 2));
+        // console.log('data.getUsuarios', typeof data.getUsuario.id);
+        setUserId(parseInt(data.getUsuario.id, 10));
       })
-      .catch(() => console.log('No Autenticado'));
+      .catch((error) => {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error interno',
+          text: 'Por favor, reporta el problema',
+        });
+      });
+    // verifyUser()
+    //   .then((r) => {
+    //     setUserId(r.userId.id);
+    //   })
+    //   .catch(() => console.log('No Autenticado'));
   };
 
   const percentageAndCycleCheck = (e) => {
@@ -117,7 +150,7 @@ const OperationMain = ({ match, history }) => {
     handleUserInput();
     percentageAndCycleCheck();
     validateDelta();
-    setUnit(match.params.unit);
+    setUnit(parseUnit(match.params.unit, match.params.unitnumber));
     setStoreCr(match.params.storecr);
     setStore(match.params.store);
     generalValidation();
@@ -189,6 +222,7 @@ const OperationMain = ({ match, history }) => {
         form.porcentaje_evaporador,
         form.porcentaje_condensador,
         form.ciclos_evaporador,
+        // eslint-disable-next-line comma-dangle
         form.ciclos_condensador
       );
       // console.log(operation);
@@ -206,9 +240,9 @@ const OperationMain = ({ match, history }) => {
         setValues({
           ...form,
           delta: operation.delta,
-          unidad: `${unit} ${match.params.unitnumber}`,
+          unidad: unit,
           CR: storeCr,
-          id_usuario: user,
+          id_usuario: userId,
         });
         setReadyToSend(true);
       }
@@ -217,26 +251,132 @@ const OperationMain = ({ match, history }) => {
 
   const formattingForm = (form) => {
     const formattedForm = {
-      comentarios: form.comentarios,
-      aprobado: form.aprobado,
-      retorno: form.retorno,
-      inyeccion: form.inyeccion,
-      retorno2: form.retorno2,
-      inyeccion2: form.inyeccion2,
-      porcentaje_evaporador: form.porcentaje_evaporador,
-      ciclos_evaporador: form.ciclos_evaporador,
-      porcentaje_condensador: form.porcentaje_condensador,
-      ciclos_condensador: form.ciclos_condensador,
-      delta: form.delta,
-      unidad: form.unidad,
       CR: form.CR,
       id_usuario: form.id_usuario,
+      unidad: form.unidad,
+      retorno: parseFloat(form.retorno),
+      inyeccion: parseFloat(form.inyeccion),
+      retorno2: parseFloat(form.retorno2),
+      inyeccion2: parseFloat(form.inyeccion2),
+      porcentaje_evaporador: parseFloat(form.porcentaje_evaporador),
+      ciclos_evaporador: parseFloat(form.ciclos_evaporador),
+      porcentaje_condensador: parseFloat(form.porcentaje_condensador),
+      ciclos_condensador: parseFloat(form.ciclos_condensador),
+      delta: parseFloat(form.delta),
+      aprobado: form.aprobado,
+      comentarios: form.comentarios,
     };
     return formattedForm;
   };
 
-  const validatingResponse = (status) => {
-    if (status === 409) {
+  const sendWorkingEfficicency = async (update, id) => {
+    //ordering and formatting the data
+    const data = formattingForm(form);
+    console.log(data);
+
+    const queryToSend = gql`
+      mutation sendWorkingEfficicency($input: EficienciaDeTrabajoInput!) {
+        addEficienciaDeTrabajo(input: $input) {
+          id
+          fecha_hora
+        }
+      }
+    `;
+
+    const queryToUpdate = gql`
+      mutation updateWorkingEfficiency(
+        $input: EficienciaDeTrabajoInput!
+        $id: String!
+      ) {
+        updateEficienciaDeTrabajo(input: $input, id: $id) {
+          id
+          fecha_hora
+        }
+      }
+    `;
+
+    const variablesToSend = {
+      input: data,
+    };
+
+    const variablesToUpdate = {
+      input: data,
+      id,
+    };
+
+    await graphQLClient
+      .request(
+        update ? queryToUpdate : queryToSend,
+        // eslint-disable-next-line comma-dangle
+        update ? variablesToUpdate : variablesToSend
+      )
+      .then((data) => {
+        // console.log(JSON.stringify(data, undefined, 2));
+        if (update) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos actualizados',
+          });
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos enviados',
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al enviar',
+          text: 'Hubo un error al enviar. Por favor, reporta el problema.',
+        });
+      });
+  };
+
+  const avoidingDuplicate = async () => {
+    const query = gql`
+      query validatingWorkingEfficiency($storeCR: String!, $unit: String!) {
+        getEficienciaDeTrabajoForValidation(storeCR: $storeCR, unit: $unit) {
+          id
+          delta
+        }
+      }
+    `;
+
+    const variables = {
+      storeCR: storeCr,
+      unit,
+    };
+
+    const duplicated = await graphQLClient
+      .request(query, variables)
+      .then((data) => {
+        console.log(JSON.stringify(data, undefined, 2));
+        if (data.getEficienciaDeTrabajoForValidation.delta === null) {
+          console.log('dato no repetido');
+          return false;
+        }
+        console.log('dato repetido');
+        duplicatedId = data.getEficienciaDeTrabajoForValidation.id;
+        // console.log('duplicatedId', duplicatedId);
+        return true;
+      })
+      .catch((error) => {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error interno',
+          text: 'Por favor, reporta el problema',
+        });
+      });
+    setReadyToSend(false);
+    return duplicated;
+  };
+
+  const sendData = async (e) => {
+    //checking if the data it is not duplicated
+    if (await avoidingDuplicate()) {
       Swal.fire({
         title: 'Datos repetidos',
         text: 'Este dato ya ha sido introducido ¿Deseas actualizar los datos?',
@@ -247,43 +387,9 @@ const OperationMain = ({ match, history }) => {
         confirmButtonText: 'Actualizar datos',
         cancelButtonText: 'Cancelar',
       }).then((result) => {
-        // console.log(result);
         if (result.value) {
-          //actualizar data
-          const data = formattingForm(form);
-          fetch(`${process.env.SERVER_IP}/api/operation`, {
-            method: 'PUT',
-            body: JSON.stringify(data),
-            mode: 'cors',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-          })
-            .then((res) => {
-              if (res.status === 202) {
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Datos actualizados',
-                });
-              } else if (status === 500) {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error al enviar',
-                  text:
-                    'Hubo un error al enviar. Por favor, reporta el problema.',
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Error al enviar',
-                text:
-                  'Hubo un error al enviar. Por favor, reporta el problema.',
-              });
-            });
+          //updateWorkingEfficiency
+          sendWorkingEfficicency(true, duplicatedId);
         } else if (result.dismiss === 'cancel') {
           Swal.fire({
             title: 'Datos no enviados',
@@ -291,68 +397,14 @@ const OperationMain = ({ match, history }) => {
           });
         }
       });
-    } else if (status === 201) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Datos enviados',
-      });
-    } else if (status === 500) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al enviar',
-        text:
-          'Hubo un error interno al enviar. Por favor, reporta el problema.',
-      });
+    } else {
+      //sendWorkingEfficicency
+      sendWorkingEfficicency(false);
     }
-  };
-
-  const sendData = (e) => {
-    //When send, turn off button
-    // generalValidation();
-    // e.preventDefault();
-    const data = formattingForm(form);
-    // console.log(form);
-    // console.log(user);
-    // console.log(data);
-    // alert(JSON.stringify(formattedForm));
-    fetch(`${process.env.SERVER_IP}/api/operation`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        validatingResponse(res.status);
-      })
-      .catch((error) => {
-        console.log(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al enviar',
-          text: 'Hubo un error al enviar. Por favor, reporta el problema.',
-        });
-      });
     setReadyToSend(false);
   };
 
   const confirmSubmit = (e) => {
-    // const validation = validateGeneralData;
-    // if (validation) {
-    //   setApproved('Si') &&
-    //     setValues({
-    //       ...form,
-    //       aprobado: 'Si',
-    //     });
-    // } else {
-    //   setApproved('No') &&
-    //     setValues({
-    //       ...form,
-    //       aprobado: 'No',
-    //     });
-    // }
     if (approved === 'No') {
       e.preventDefault();
       Swal.fire({
@@ -407,7 +459,7 @@ const OperationMain = ({ match, history }) => {
       </div>
       <header>
         <h2>Eficiencia de Trabajo</h2>
-        <p>{`${unit} ${match.params.unitnumber}`}</p>
+        <p>{unit}</p>
         <p>{store.charAt(0) + store.slice(1).toLowerCase()}</p>
       </header>
       <form>

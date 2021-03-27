@@ -333,3 +333,16 @@ export const validateGeneralData = () => {
   return false;
   // console.log(delta);
 };
+
+export const parseUnit = (unit, unitNumber) => {
+  switch (unit) {
+    case 'Conservacion':
+      return `Conservación ${unitNumber}`;
+    case 'Hielo':
+      return 'Hielo';
+    case 'Cerveza':
+      return 'Cerveza';
+    case 'Clima':
+      return `Clima ${unitNumber}`;
+  }
+};
