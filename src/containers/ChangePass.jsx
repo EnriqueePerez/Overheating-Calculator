@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 import swal from 'sweetalert2';
+import { useFirebaseApp } from 'reactfire';
+import 'firebase/auth';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
-import { logout } from '../utils/userContext';
 import '../assets/styles/components/Login.scss';
 
 const ChangePass = () => {
+  const history = useHistory();
+  const firebase = useFirebaseApp();
   const [form, setValues] = useState({
     new_password: '',
     confirm_new_password: '',
@@ -15,11 +18,73 @@ const ChangePass = () => {
     document.getElementById('new_password').value = '';
     document.getElementById('confirm_new_password').value = '';
   };
+
+  const changePassword = async () => {
+    await firebase
+      .auth()
+      .currentUser.updatePassword(form.new_password)
+      .then(() => {
+        swal
+          .fire({
+            icon: 'success',
+            title: 'Contraseña cambiada exitosamente.',
+          })
+          .then(async () => {
+            await firebase
+              .auth()
+              .signOut()
+              .then(() => {
+                history.push('/login');
+              })
+              .catch(() => {
+                history.push('/login');
+              });
+          });
+      })
+      .catch((error) => {
+        console.log('error changing password', error);
+        if (error.code === 'auth/requires-recent-login') {
+          swal
+            .fire({
+              title: 'Inicio de sesión requerido',
+              text:
+                'Para poder cambiar tu contraseña, debes iniciar sesion nuevamente. Una vez iniciado sesión, intenta nuevamente.',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3ed630',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Iniciar sesión nuevamente',
+              cancelButtonText: 'Cancelar',
+            })
+            .then(async (result) => {
+              if (result.value) {
+                await firebase
+                  .auth()
+                  .signOut()
+                  .then(() => {
+                    history.push('/login');
+                  })
+                  .catch(() => {
+                    history.push('/login');
+                  });
+              } else if (result.dismiss === 'cancel') {
+                swal.fire({
+                  title: 'Contraseña no cambiada',
+                  icon: 'info',
+                });
+              }
+            });
+        } else {
+          swal.fire({
+            icon: 'error',
+            title:
+              'Ocurrio un problema interno. Por favor, reporta el problema',
+          });
+        }
+      });
+  };
   const verifyPassword = async (e) => {
-    // console.log(form);
-    // verifyUser()
-    //   .then(() => {})
-    //   .catch(() => props.history.push('./login'));
+    console.log(form);
     if (form.new_password === '' || form.confirm_new_password === '') {
       //   console.log('faltan campos');
       swal.fire({
@@ -28,42 +93,7 @@ const ChangePass = () => {
       });
     } else {
       if (form.new_password === form.confirm_new_password) {
-        await axios({
-          url: `${process.env.SERVER_IP}/auth/changePass`,
-          method: 'POST',
-          withCredentials: 'true',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: {
-            newPass: form.new_password, //make route to check old pass and change password, add jwt auth first and then add new function in user service to change pass
-          },
-        })
-          .then(() => {
-            swal
-              .fire({
-                icon: 'success',
-                title: 'Contraseña cambiada exitosamente.',
-              })
-              .then(() => {
-                logout()
-                  .then(() => window.location.reload())
-                  .catch(() => {
-                    swal.fire({
-                      icon: 'error',
-                      title:
-                        'Ocurrio un problema interno. Por favor, reporta el problema',
-                    });
-                  });
-              });
-          })
-          .catch(() => {
-            swal.fire({
-              icon: 'error',
-              title:
-                'Ocurrio un problema al cambiar la contraseña. Intenta de nuevo.',
-            });
-          });
+        await changePassword();
       } else {
         swal.fire({
           icon: 'error',

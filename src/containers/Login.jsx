@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import 'firebase/auth';
+import { useHistory } from 'react-router-dom';
 import { useFirebaseApp } from 'reactfire';
 import swal from 'sweetalert2';
 import Header from '../components/Header';
 import '../assets/styles/components/Login.scss';
 
-const Login = (props) => {
+const Login = () => {
+  const history = useHistory();
   const [form, setValues] = useState();
   const firebase = useFirebaseApp();
 
@@ -22,14 +24,14 @@ const Login = (props) => {
       .signInWithEmailAndPassword(form.email, form.password)
       .then((userCredentials) => {
         const { user } = userCredentials;
-        props.history.push('/');
+        history.push('/');
         // user.updateProfile({
         //   displayName: 'Enrique Perez',
         // });
         console.log('aqui esta el usuario', user);
       })
       .catch((err) => {
-        console.log(err.code, err.message);
+        // console.log(err.code, err.message);
         if (
           err.code === 'auth/wrong-password' ||
           err.code === 'auth/user-not-found)'
