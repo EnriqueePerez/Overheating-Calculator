@@ -84,7 +84,7 @@ const ChangePass = () => {
       });
   };
   const verifyPassword = async (e) => {
-    console.log(form);
+    // console.log(form);
     if (form.new_password === '' || form.confirm_new_password === '') {
       //   console.log('faltan campos');
       swal.fire({

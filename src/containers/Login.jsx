@@ -23,12 +23,12 @@ const Login = () => {
       .auth()
       .signInWithEmailAndPassword(form.email, form.password)
       .then((userCredentials) => {
-        const { user } = userCredentials;
+        // const { user } = userCredentials;
         history.push('/');
         // user.updateProfile({
         //   displayName: 'Enrique Perez',
         // });
-        console.log('aqui esta el usuario', user);
+        // console.log('aqui esta el usuario', user);
       })
       .catch((err) => {
         // console.log(err.code, err.message);
