@@ -154,7 +154,7 @@ const OperationMain = ({ match, history }) => {
     setStoreCr(match.params.storecr);
     setStore(match.params.store);
     generalValidation();
-  }, [approved, readyToSend, delta]); //return approved after enabling database
+  }, [approved, readyToSend, delta]);
 
   const handleInput = (e) => {
     setValues({
