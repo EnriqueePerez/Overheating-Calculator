@@ -122,7 +122,7 @@ const OperationMain = ({ match, history }) => {
   };
 
   const validateDelta = () => {
-    if (unit === 'Clima') {
+    if (unit === 'Clima 1' || unit === 'Clima 2') {
       if (delta >= 10 && delta <= 15) {
         document.getElementById('delta').style.color = '#88fc88';
       } else {
