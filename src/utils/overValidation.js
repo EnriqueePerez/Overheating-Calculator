@@ -2,7 +2,8 @@ export const validateStartPressure = (e, refrigerant, unit) => {
   switch (refrigerant) {
     case 'R22': {
       switch (unit) {
-        case 'Conservacion':
+        case 'Conservación 1':
+        case 'Conservación 2':
         case 'Cerveza': {
           if (e.target.value >= 54 && e.target.value <= 66) {
             document.querySelector('#startPressure').style.backgroundColor =
@@ -32,7 +33,8 @@ export const validateStartPressure = (e, refrigerant, unit) => {
     }
     case 'R404a': {
       switch (unit) {
-        case 'Conservacion':
+        case 'Conservación 1':
+        case 'Conservación 2':
         case 'Cerveza': {
           if (e.target.value >= 63 && e.target.value <= 77) {
             document.querySelector('#startPressure').style.backgroundColor =
@@ -66,7 +68,8 @@ export const validateStopPressure = (e, refrigerant, unit) => {
   switch (refrigerant) {
     case 'R22': {
       switch (unit) {
-        case 'Conservacion':
+        case 'Conservación 1':
+        case 'Conservación 2':
         case 'Cerveza': {
           if (e.target.value >= 27 && e.target.value <= 33) {
             document.querySelector('#stopPressure').style.backgroundColor =
@@ -96,7 +99,8 @@ export const validateStopPressure = (e, refrigerant, unit) => {
     }
     case 'R404a': {
       switch (unit) {
-        case 'Conservacion':
+        case 'Conservación 1':
+        case 'Conservación 2':
         case 'Cerveza': {
           if (e.target.value >= 36 && e.target.value <= 44) {
             document.querySelector('#stopPressure').style.backgroundColor =
@@ -128,7 +132,8 @@ export const validateStopPressure = (e, refrigerant, unit) => {
 
 export const validateOverheatingTemperature = (overheatingTemp, unit) => {
   switch (unit) {
-    case 'Conservacion':
+    case 'Conservación 1':
+    case 'Conservación 2':
     case 'Cerveza': {
       if (overheatingTemp > 12 && overheatingTemp < 17) {
         document.getElementById('overheatingTemp').style.color = 'green';
