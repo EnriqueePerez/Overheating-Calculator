@@ -66,38 +66,43 @@ const OperationMain = ({ match, history }) => {
   };
 
   const handleUserInput = async () => {
-    const query = gql`
-      query searchingUser($email: String!) {
-        getUsuario(email: $email) {
-          id
-        }
-      }
-    `;
-
-    const variables = {
-      email: user.data.email,
-    };
-
-    await graphQLClient
-      .request(query, variables)
-      .then((data) => {
-        // console.log(JSON.stringify(data, undefined, 2));
-        // console.log('data.getUsuarios', typeof data.getUsuario.id);
-        setUserId(parseInt(data.getUsuario.id, 10));
-      })
-      .catch((error) => {
-        console.error(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error interno',
-          text: 'Por favor, reporta el problema',
-        });
+    if (user === null || undefined) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error interno',
+        text: 'Por favor, reporta el problema',
       });
-    // verifyUser()
-    //   .then((r) => {
-    //     setUserId(r.userId.id);
+      history.push('/');
+    } else {
+      setUserId(parseInt(user.data.uid, 10));
+      // console.log('handleUserInput', user.data.uid);
+    }
+    // const query = gql`
+    //   query searchingUser($email: String!) {
+    //     getUsuario(email: $email) {
+    //       id
+    //     }
+    //   }
+    // `;
+    // const variables = {
+    //   email: user.data.email,
+    // };
+    // await graphQLClient
+    //   .request(query, variables)
+    //   .then((data) => {
+    //     // console.log(JSON.stringify(data, undefined, 2));
+    //     // console.log('data.getUsuarios', typeof data.getUsuario.id);
+    //     setUserId(parseInt(data.getUsuario.id, 10));
     //   })
-    //   .catch(() => console.log('No Autenticado'));
+    //   .catch((error) => {
+    //     console.error(error);
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Error interno',
+    //       text: 'Por favor, reporta el problema',
+    //     });
+    //     history.push('/');
+    //   });
   };
 
   const percentageAndCycleCheck = (e) => {
