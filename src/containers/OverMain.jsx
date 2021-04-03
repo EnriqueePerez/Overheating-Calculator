@@ -43,6 +43,8 @@ const Main = ({ match, history }) => {
     refrigerante: 'Sin refrigerante',
     CR: 'AAA',
     id_usuario: 9,
+    tienda: undefined,
+    nombre_usuario: '',
   });
   const graphQLClient = new GraphQLClient(`${process.env.SERVER_IP}/api`, {
     mode: 'cors',
@@ -178,7 +180,9 @@ const Main = ({ match, history }) => {
         unidad: unit,
         refrigerante: refrigerant,
         CR: storeCr,
+        tienda: store,
         id_usuario: userId,
+        nombre_usuario: user.data.displayName,
       });
       setReadyToSend(true);
     }
@@ -187,7 +191,9 @@ const Main = ({ match, history }) => {
   const formattingForm = (form) => {
     const formattedForm = {
       CR: form.CR,
+      tienda: form.tienda,
       id_usuario: form.id_usuario,
+      nombre_usuario: form.nombre_usuario,
       unidad: form.unidad,
       refrigerante: form.refrigerante,
       presion_arranque: parseFloat(form.presion_arranque),

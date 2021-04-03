@@ -45,6 +45,8 @@ const OperationMain = ({ match, history }) => {
     unidad: 'Sin unidad',
     CR: 'AAA',
     id_usuario: 9,
+    tienda: undefined,
+    nombre_usuario: '',
   });
   const graphQLClient = new GraphQLClient(`${process.env.SERVER_IP}/api`, {
     mode: 'cors',
@@ -247,7 +249,9 @@ const OperationMain = ({ match, history }) => {
           delta: operation.delta,
           unidad: unit,
           CR: storeCr,
+          tienda: store,
           id_usuario: userId,
+          nombre_usuario: user.data.displayName,
         });
         setReadyToSend(true);
       }
@@ -257,7 +261,9 @@ const OperationMain = ({ match, history }) => {
   const formattingForm = (form) => {
     const formattedForm = {
       CR: form.CR,
+      tienda: form.tienda,
       id_usuario: form.id_usuario,
+      nombre_usuario: form.nombre_usuario,
       unidad: form.unidad,
       retorno: parseFloat(form.retorno),
       inyeccion: parseFloat(form.inyeccion),
@@ -277,7 +283,7 @@ const OperationMain = ({ match, history }) => {
   const sendWorkingEfficicency = async (update, id) => {
     //ordering and formatting the data
     const data = formattingForm(form);
-    console.log(data);
+    // console.log(data);
 
     const queryToSend = gql`
       mutation sendWorkingEfficicency($input: EficienciaDeTrabajoInput!) {
