@@ -130,6 +130,72 @@ export const validateStopPressure = (e, refrigerant, unit) => {
   }
 };
 
+export const validateSuctionPressure = (e, refrigerant, unit) => {
+  switch (refrigerant) {
+    case 'R22': {
+      switch (unit) {
+        case 'Conservación 1':
+        case 'Conservación 2':
+        case 'Cerveza': {
+          if (e.target.value >= 45 && e.target.value <= 57) {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+          }
+          break;
+        }
+        case 'Hielo': {
+          if (e.target.value >= 23 && e.target.value <= 29) {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+            break;
+          }
+        }
+      }
+      break;
+    }
+    case 'R404a': {
+      switch (unit) {
+        case 'Conservación 1':
+        case 'Conservación 2':
+        case 'Cerveza': {
+          if (e.target.value >= 55 && e.target.value <= 65) {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+          }
+          break;
+        }
+        case 'Hielo': {
+          if (e.target.value >= 30 && e.target.value <= 38) {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#88fc88'; //green
+            // console.log('APROVADO');
+          } else {
+            document.querySelector('#presion_succion').style.backgroundColor =
+              '#fa6b6b'; //red
+            // console.log('RECHAZADO');
+            break;
+          }
+        }
+      }
+    }
+  }
+};
+
 export const validateOverheatingTemperature = (overheatingTemp, unit) => {
   switch (unit) {
     case 'Conservación 1':

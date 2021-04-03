@@ -10,6 +10,7 @@ import {
   calculation,
   validateOverheatingTemperature,
   parseUnit,
+  validateSuctionPressure,
 } from '../utils/overValidation';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
@@ -52,6 +53,8 @@ const Main = ({ match, history }) => {
       document.querySelector('#startPressure').style.backgroundColor ===
         'rgb(136, 252, 136)' &&
       document.querySelector('#stopPressure').style.backgroundColor ===
+        'rgb(136, 252, 136)' &&
+      document.querySelector('#presion_succion').style.backgroundColor ===
         'rgb(136, 252, 136)' &&
       document.getElementById('overheatingTemp').style.color === 'green'
     ) {
@@ -133,6 +136,11 @@ const Main = ({ match, history }) => {
 
   const validationStopPressure = (e) => {
     validateStopPressure(e, refrigerant, unit);
+    handleInput(e);
+  };
+
+  const validationSuctionPressure = (e) => {
+    validateSuctionPressure(e, refrigerant, unit);
     handleInput(e);
   };
 
@@ -493,9 +501,10 @@ const Main = ({ match, history }) => {
             <h3>Presión de succión</h3>
             <input
               name='presion_succion'
+              id='presion_succion'
               type='number'
               placeholder='PSI'
-              onChange={handleInput}
+              onChange={validationSuctionPressure}
               inputMode='decimal'
             />
           </div>
