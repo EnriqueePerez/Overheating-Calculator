@@ -1,6 +1,7 @@
-/* eslint-disable operator-linebreak */
 /* eslint-disable react/jsx-indent */
+/* eslint-disable operator-linebreak */
 /* eslint-disable indent */
+/* eslint-disable comma-dangle */
 import React, { useEffect, useState } from 'react';
 import { gql, GraphQLClient } from 'graphql-request';
 import Swal from 'sweetalert2';
@@ -9,9 +10,7 @@ import UserInfo from './UserInfo';
 import Title from '../components/Title';
 import '../assets/styles/components/Choices.scss';
 
-const FourthChoice = (props) => {
-  const { match } = props;
-  // console.log(match);
+const OperationStores = (props) => {
   const [stores, setStores] = useState([
     { id: '', nombre: 'Cargando tiendas' },
   ]);
@@ -30,7 +29,6 @@ const FourthChoice = (props) => {
 
   const doesStoresNeedToBeUpdated = () => {
     const localStorageDate = new Date(
-      // eslint-disable-next-line comma-dangle
       localStorage.getItem('dateToUpdateStores')
     ).getTime();
     const actualDate = new Date().getTime();
@@ -96,7 +94,7 @@ const FourthChoice = (props) => {
     setSelectedStore(value);
   };
 
-  const redirectToMain = (e) => {
+  const redirectToUnits = (e) => {
     if (selectedStore === 'Selecciona la tienda') {
       alert('Por favor, selecciona una tienda');
     } else {
@@ -104,17 +102,18 @@ const FourthChoice = (props) => {
       e.preventDefault();
       props.history.push(
         // eslint-disable-next-line comma-dangle
-        `/overheating/main/${match.params.refrigerant}/${match.params.unit}/${match.params.unitnumber}/${selectedStoreCR}/${selectedStore}`
+        `/operation/units/${selectedStoreCR}/${selectedStore}`
+        // `/operation/main/${match.params.unit}/${match.params.unitnumber}/${selectedStoreCR}/${selectedStore}`
       );
     }
   };
   return (
     <>
       <div className='navigationContainer'>
-        <Navigation />
+        <Navigation onMain={false} />
         <UserInfo />
       </div>
-      <Title title='Sobrecalentamiento' />
+      <Title title='Eficiencia de Trabajo' />
       <div className='title-container'>
         <h1>Tienda</h1>
         <div className='dropdown-list'>
@@ -132,7 +131,7 @@ const FourthChoice = (props) => {
         <button
           className='continue-button'
           type='submit'
-          onClick={redirectToMain}
+          onClick={redirectToUnits}
         >
           Continuar
         </button>
@@ -141,4 +140,4 @@ const FourthChoice = (props) => {
   );
 };
 
-export default FourthChoice;
+export default OperationStores;

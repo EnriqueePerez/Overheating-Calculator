@@ -450,7 +450,12 @@ const Main = ({ match, history }) => {
     //eliminate userId id form and add ambient temperature, then add screen to change pass
     <>
       <div className='navigationContainer'>
-        <Navigation />
+        <Navigation
+          onMain={true}
+          direction='overheating'
+          storecr={match.params.storecr}
+          store={match.params.store}
+        />
         <UserInfo />
       </div>
       <header>

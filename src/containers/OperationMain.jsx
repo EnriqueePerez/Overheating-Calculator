@@ -459,7 +459,12 @@ const OperationMain = ({ match, history }) => {
   return (
     <>
       <div className='navigationContainer'>
-        <Navigation />
+        <Navigation
+          onMain={true}
+          direction='workingEfficiency'
+          storecr={match.params.storecr}
+          store={match.params.store}
+        />
         <UserInfo />
       </div>
       <header>

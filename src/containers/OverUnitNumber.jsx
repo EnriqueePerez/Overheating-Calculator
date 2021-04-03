@@ -6,22 +6,28 @@ import Navigation from './Navigation';
 import UserInfo from './UserInfo';
 import Title from '../components/Title';
 
-const OperationSecond = ({ match }) => {
+const OverUnitNumber = ({ match, history }) => {
+  // console.log(match.params);
+
   return (
     <>
       <div className='navigationContainer'>
-        <Navigation />
+        <Navigation onMain={false} />
         <UserInfo />
       </div>
-      <Title title='Eficiencia de Trabajo' />
+      <Title title='Sobrecalentamiento' />
       <div className='title-container'>
         <h1>Número de evaporador</h1>
       </div>
       <div className='buttons-container'>
-        <Link to={`/operation/stores/${match.params.unit}/1`}>
+        <Link
+          to={`/overheating/refrigerant/${match.params.storecr}/${match.params.store}/1/${match.params.unit}`}
+        >
           <button type='submit'>1</button>
         </Link>
-        <Link to={`/operation/stores/${match.params.unit}/2`}>
+        <Link
+          to={`/overheating/refrigerant/${match.params.storecr}/${match.params.store}/2/${match.params.unit}`}
+        >
           <button type='submit'>2</button>
         </Link>
       </div>
@@ -29,4 +35,4 @@ const OperationSecond = ({ match }) => {
   );
 };
 
-export default OperationSecond;
+export default OverUnitNumber;

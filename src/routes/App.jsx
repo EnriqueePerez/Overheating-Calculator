@@ -4,14 +4,14 @@ import '../assets/styles/App.scss';
 import { AuthCheck } from 'reactfire';
 import Home from '../containers/Home';
 import Login from '../containers/Login';
-import OverFirst from '../containers/OverFirst';
-import OverSecond from '../containers/OverSecond';
-import OverThird from '../containers/OverThird';
-import OverFourth from '../containers/OverFourth';
+import OverUnits from '../containers/OverUnits';
+import OverUnitNumber from '../containers/OverUnitNumber';
+import OverRefrigerant from '../containers/OverRefrigerant';
+import OverStores from '../containers/OverStores';
 import OverMain from '../containers/OverMain';
-import OperationFirst from '../containers/OperationFirst';
-import OperationSecond from '../containers/OperationSecond';
-import OperationThird from '../containers/OperationThird';
+import OperationUnits from '../containers/OperationUnits';
+import OperationUnitNumber from '../containers/OperationUnitNumber';
+import OperationStores from '../containers/OperationStores';
 import ChangePass from '../containers/ChangePass';
 import OperationMain from '../containers/OperationMain';
 
@@ -20,37 +20,37 @@ const App = () => (
     <AuthCheck fallback={<Login />}>
       <Switch>
         <Route exact path='/' component={Home} />
-        <Route exact path='/overheating' component={OverFirst} />
+        <Route exact path='/overheating' component={OverStores} />
         <Route
           exact
-          path='/overheating/unitnumber/:unit'
-          component={OverSecond}
+          path='/overheating/units/:storecr/:store'
+          component={OverUnits}
         />
         <Route
           exact
-          path='/overheating/refrigerant/:unit/:unitnumber'
-          component={OverThird}
+          path='/overheating/unitnumber/:storecr/:store/:unit'
+          component={OverUnitNumber}
         />
         <Route
           exact
-          path='/overheating/stores/:refrigerant/:unit/:unitnumber'
-          component={OverFourth}
+          path='/overheating/refrigerant/:storecr/:store/:unitnumber/:unit'
+          component={OverRefrigerant}
         />
         <Route
           exact
           path='/overheating/main/:refrigerant/:unit/:unitnumber/:storecr/:store'
           component={OverMain}
         />
-        <Route exact path='/operation' component={OperationFirst} />
+        <Route exact path='/operation' component={OperationStores} />
         <Route
           exact
-          path='/operation/unitnumber/:unit'
-          component={OperationSecond}
+          path='/operation/units/:storecr/:store'
+          component={OperationUnits}
         />
         <Route
           exact
-          path='/operation/stores/:unit/:unitnumber'
-          component={OperationThird}
+          path='/operation/unitnumber/:storecr/:store/:unit'
+          component={OperationUnitNumber}
         />
         <Route
           exact
