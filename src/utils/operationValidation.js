@@ -224,13 +224,20 @@ export const calculateDeltaAndTolerances = (
   evaporatorPercentage,
   condenserPercentage,
   evaporatorCycles,
-  condenserCycles
+  condenserCycles,
+  unit
 ) => {
   const retorno = parseFloat(retornoOriginal);
   const injection = parseFloat(injectionOriginal);
   const retorno2 = parseFloat(retorno2Original);
   const injection2 = parseFloat(injection2Original);
-  if (retorno > injection) {
+  if (retorno > injection && retorno < 10) {
+    if (unit === 'Hielo') {
+      console.log('entre a hielo', unit, retorno);
+      if (retorno > -0.1) {
+        return false;
+      }
+    }
     // console.log(retorno);
     // console.log(injection);
     // console.log(retorno2);

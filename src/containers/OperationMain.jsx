@@ -229,15 +229,18 @@ const OperationMain = ({ match, history }) => {
         form.porcentaje_evaporador,
         form.porcentaje_condensador,
         form.ciclos_evaporador,
+        form.ciclos_condensador,
         // eslint-disable-next-line comma-dangle
-        form.ciclos_condensador
+        unit
       );
       // console.log(operation);
       // console.log(form);
       if (operation === false) {
         setReadyToSend(false);
         Swal.fire({
-          title: 'El retorno no puede ser menor o igual que la inyección',
+          title: 'Retorno incorrecto o fuera de rango',
+          text:
+            'El retorno no puede ser menor o igual que la inyección, ó  el enfriamiento es insuficiente.',
           icon: 'error',
         });
       } else {
