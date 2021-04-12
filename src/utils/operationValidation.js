@@ -231,7 +231,16 @@ export const calculateDeltaAndTolerances = (
   const injection = parseFloat(injectionOriginal);
   const retorno2 = parseFloat(retorno2Original);
   const injection2 = parseFloat(injection2Original);
-  if (retorno > injection && retorno < 10) {
+  if (retorno > injection && retorno < 26) {
+    if (
+      unit === 'Conservación 1' ||
+      unit === 'Conservación 2' ||
+      unit === 'Cerveza'
+    ) {
+      if (retorno > 10.1) {
+        return false;
+      }
+    }
     if (unit === 'Hielo') {
       console.log('entre a hielo', unit, retorno);
       if (retorno > -0.1) {
