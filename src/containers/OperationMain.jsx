@@ -53,7 +53,7 @@ const OperationMain = ({ match, history }) => {
   });
 
   const generalValidation = () => {
-    const validation = validateGeneralData();
+    const validation = validateGeneralData(form.retorno, form.retorno2);
     if (validation) {
       setApproved('Si');
       // console.log(approved);
