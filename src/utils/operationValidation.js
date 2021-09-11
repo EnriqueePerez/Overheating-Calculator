@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 export const validatePercentage = (percentage) => {
   //checking evaporator percentage
-  if (percentage < 50) {
+  if (percentage <= 50) {
     return true;
   }
   return false;
