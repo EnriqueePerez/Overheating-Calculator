@@ -30,26 +30,30 @@ export const calculateDeltaAndTolerances = (
   const injection = parseFloat(injectionOriginal);
   const retorno2 = parseFloat(retorno2Original);
   const injection2 = parseFloat(injection2Original);
-  if (retorno > injection && retorno < 26) {
+  if (retorno > injection) {
     if (
       unit === 'Conservación 1' ||
-      unit === 'Conservación 2' ||
-      unit === 'Cerveza'
+      unit === 'Conservación 2'
     ) {
-      if (retorno > 10.1) {
+      if (retorno > 10 && retorno < 3) {
+        return false;
+      }
+    }
+    if (unit === 'Cerveza') {
+      if (retorno > 8 && retorno < 0) {
         return false;
       }
     }
     if (unit === 'Hielo') {
-      // console.log('entre a hielo', unit, retorno);
-      if (retorno > -0.1) {
+      if (retorno > 0 && retorno < -12) {
         return false;
       }
     }
-    // console.log(retorno);
-    // console.log(injection);
-    // console.log(retorno2);
-    // console.log(injection2);
+    if (unit === 'Clima 1' || unit === 'Clima 2') {
+      if (retorno < 22 && retorno > 26) {
+        return false;
+      }
+    }
     if (!(retorno2 === 0 && injection2 === 0)) {
       //retorno 2 y injection 2 estan disponibles, es decir, los campos se estan rellenando
       if (retorno2 <= injection2) {

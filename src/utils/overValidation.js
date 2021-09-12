@@ -201,19 +201,19 @@ export const validateOverheatingTemperature = (overheatingTemp, unit) => {
     case 'Conservación 1':
     case 'Conservación 2':
     case 'Cerveza': {
-      if (overheatingTemp > 12 && overheatingTemp < 17) {
+      if (overheatingTemp >= 12 && overheatingTemp <= 17) {
         document.getElementById('overheatingTemp').style.color = 'green';
       }
-      if (overheatingTemp <= 12 || overheatingTemp >= 17) {
+      if (overheatingTemp < 12 || overheatingTemp > 17) {
         document.getElementById('overheatingTemp').style.color = 'red';
       }
       break;
     }
     case 'Hielo': {
-      if (overheatingTemp > 12 && overheatingTemp < 30) {
+      if (overheatingTemp >= 12 && overheatingTemp <= 30) {
         document.getElementById('overheatingTemp').style.color = 'green';
       }
-      if (overheatingTemp <= 12 || overheatingTemp >= 30) {
+      if (overheatingTemp < 12 || overheatingTemp > 30) {
         document.getElementById('overheatingTemp').style.color = 'red';
       }
     }
