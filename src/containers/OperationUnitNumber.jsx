@@ -1,12 +1,16 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 // import axios from 'axios';
 import '../assets/styles/components/Choices.scss';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
 import Title from '../components/Title';
 
-const OperationUnitNumber = ({ match }) => {
+const OperationUnitNumber = () => {
+  const { storecr, store, unit } = useParams();
+  
   return (
     <>
       <div className='navigationContainer'>
@@ -19,12 +23,12 @@ const OperationUnitNumber = ({ match }) => {
       </div>
       <div className='buttons-container'>
         <Link
-          to={`/operation/main/${match.params.unit}/1/${match.params.storecr}/${match.params.store}`}
+          to={`/operation/main/${unit}/1/${storecr}/${store}`}
         >
           <button type='submit'>1</button>
         </Link>
         <Link
-          to={`/operation/main/${match.params.unit}/2/${match.params.storecr}/${match.params.store}`}
+          to={`/operation/main/${unit}/2/${storecr}/${store}`}
         >
           <button type='submit'>2</button>
         </Link>

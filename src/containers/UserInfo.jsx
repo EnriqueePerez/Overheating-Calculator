@@ -1,28 +1,25 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useEffect, useState } from 'react';
-import { useUser, useFirebaseApp } from 'reactfire';
-import 'firebase/auth';
-import { Link, useHistory } from 'react-router-dom';
+import { useUser, useAuth } from 'reactfire';
+import { signOut } from 'firebase/auth';
+import { Link, useNavigate } from 'react-router-dom';
 import '../assets/styles/components/userInfo.scss';
 
 const UserInfo = () => {
-  const history = useHistory();
-  const firebase = useFirebaseApp();
+  const navigate = useNavigate();
+  const auth = useAuth();
   const user = useUser();
   // const [user, setUser] = useState(null);
   const [greeting, setGreeting] = useState('sin horario');
   const [showMenu, setShowMenuBar] = useState(false);
 
   const redirectToLogout = async () => {
-    await firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        history.push('/login');
-      })
-      .catch(() => {
-        history.push('/login');
-      });
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      navigate('/login');
+    }
   };
 
   const checkTime = () => {

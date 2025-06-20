@@ -5,12 +5,14 @@
 import React, { useEffect, useState } from 'react';
 import { gql, GraphQLClient } from 'graphql-request';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
 import Title from '../components/Title';
 import '../assets/styles/components/Choices.scss';
 
-const OperationStores = (props) => {
+const OperationStores = () => {
+  const navigate = useNavigate();
   const [stores, setStores] = useState([
     { id: '', nombre: 'Cargando tiendas' },
   ]);
@@ -100,7 +102,7 @@ const OperationStores = (props) => {
     } else {
       // console.log(selectedStore);
       e.preventDefault();
-      props.history.push(
+      navigate(
         // eslint-disable-next-line comma-dangle
         `/operation/units/${selectedStoreCR}/${selectedStore}`
         // `/operation/main/${match.params.unit}/${match.params.unitnumber}/${selectedStoreCR}/${selectedStore}`

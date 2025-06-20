@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import '../assets/styles/App.scss';
-import { AuthCheck } from 'reactfire';
+import { AuthCheck, AuthProvider, useFirebaseApp } from 'reactfire';
+import { getAuth } from 'firebase/auth';
 import Home from '../containers/Home';
 import Login from '../containers/Login';
 import OverUnits from '../containers/OverUnits';
@@ -15,52 +16,58 @@ import OperationStores from '../containers/OperationStores';
 import ChangePass from '../containers/ChangePass';
 import OperationMain from '../containers/OperationMain';
 
+const AuthWrapper = ({ children }) => {
+  const app = useFirebaseApp();
+  const auth = getAuth(app);
+
+  return (
+    <AuthProvider sdk={auth}>
+      {children}
+    </AuthProvider>
+  );
+};
+
 const App = () => (
   <BrowserRouter>
-    <AuthCheck fallback={<Login />}>
-      <Switch>
-        <Route exact path='/' component={Home} />
-        <Route exact path='/overheating' component={OverStores} />
-        <Route
-          exact
-          path='/overheating/units/:storecr/:store'
-          component={OverUnits}
-        />
-        <Route
-          exact
-          path='/overheating/unitnumber/:storecr/:store/:unit'
-          component={OverUnitNumber}
-        />
-        <Route
-          exact
-          path='/overheating/refrigerant/:storecr/:store/:unitnumber/:unit'
-          component={OverRefrigerant}
-        />
-        <Route
-          exact
-          path='/overheating/main/:refrigerant/:unit/:unitnumber/:storecr/:store'
-          component={OverMain}
-        />
-        <Route exact path='/operation' component={OperationStores} />
-        <Route
-          exact
-          path='/operation/units/:storecr/:store'
-          component={OperationUnits}
-        />
-        <Route
-          exact
-          path='/operation/unitnumber/:storecr/:store/:unit'
-          component={OperationUnitNumber}
-        />
-        <Route
-          exact
-          path='/operation/main/:unit/:unitnumber/:storecr/:store'
-          component={OperationMain}
-        />
-        <Route exact path='/login' component={Login} />
-        <Route exact path='/changePass' component={ChangePass} />
-      </Switch>
-    </AuthCheck>
+    <AuthWrapper>
+      <AuthCheck fallback={<Login />}>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/overheating' element={<OverStores />} />
+          <Route
+            path='/overheating/units/:storecr/:store'
+            element={<OverUnits />}
+          />
+          <Route
+            path='/overheating/unitnumber/:storecr/:store/:unit'
+            element={<OverUnitNumber />}
+          />
+          <Route
+            path='/overheating/refrigerant/:storecr/:store/:unitnumber/:unit'
+            element={<OverRefrigerant />}
+          />
+          <Route
+            path='/overheating/main/:refrigerant/:unit/:unitnumber/:storecr/:store'
+            element={<OverMain />}
+          />
+          <Route path='/operation' element={<OperationStores />} />
+          <Route
+            path='/operation/units/:storecr/:store'
+            element={<OperationUnits />}
+          />
+          <Route
+            path='/operation/unitnumber/:storecr/:store/:unit'
+            element={<OperationUnitNumber />}
+          />
+          <Route
+            path='/operation/main/:unit/:unitnumber/:storecr/:store'
+            element={<OperationMain />}
+          />
+          <Route path='/login' element={<Login />} />
+          <Route path='/changePass' element={<ChangePass />} />
+        </Routes>
+      </AuthCheck>
+    </AuthWrapper>
   </BrowserRouter>
 );
 

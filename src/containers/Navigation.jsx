@@ -1,11 +1,11 @@
 import React from 'react';
 import '../assets/styles/components/Navigation.scss';
 import swal from 'sweetalert2';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import back from '../assets/back.png';
 
 const Navigation = ({ onMain, direction, storecr, store }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const whereToGo = () => {
     if (onMain) {
       swal
@@ -24,17 +24,17 @@ const Navigation = ({ onMain, direction, storecr, store }) => {
         .then((result) => {
           if (result.value) {
             if (direction === 'overheating') {
-              history.push(`/overheating/units/${storecr}/${store}`);
+              navigate(`/overheating/units/${storecr}/${store}`);
             } else {
-              history.push(`/operation/units/${storecr}/${store}`);
+              navigate(`/operation/units/${storecr}/${store}`);
             }
           } else if (result.dismiss === 'close') {
           } else {
-            history.push('/');
+            navigate('/');
           }
         });
     } else {
-      history.push('/');
+      navigate('/');
     }
   };
   //create function to ask where to return, include toHome and direction

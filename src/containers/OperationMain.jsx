@@ -4,6 +4,7 @@ import { gql, GraphQLClient } from 'graphql-request';
 import '../assets/styles/components/OperationMain.scss';
 import Swal from 'sweetalert2';
 import { useUser } from 'reactfire';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   validatePercentage,
   validateCycles,
@@ -14,8 +15,10 @@ import {
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
 
-const OperationMain = ({ match, history }) => {
+const OperationMain = () => {
   let duplicatedId;
+  const { unit: unitParam, unitnumber, storecr, store: storeParam } = useParams();
+  const navigate = useNavigate();
   const user = useUser();
   const [userId, setUserId] = useState(9);
   const [unit, setUnit] = useState('Sin Unidad');
@@ -74,7 +77,7 @@ const OperationMain = ({ match, history }) => {
         title: 'Error interno',
         text: 'Por favor, reporta el problema',
       });
-      history.push('/');
+      navigate('/');
     } else {
       setUserId(parseInt(user.data.uid, 10));
       // console.log('handleUserInput', user.data.uid);
@@ -146,7 +149,7 @@ const OperationMain = ({ match, history }) => {
 
   const enableSecondReturn = () => {
     if (
-      `${match.params.unit} ${match.params.unitnumber}` === 'Conservacion 2'
+      `${unitParam} ${unitnumber}` === 'Conservacion 2'
     ) {
       setsecondReturn(true);
     }
@@ -157,11 +160,11 @@ const OperationMain = ({ match, history }) => {
     handleUserInput();
     percentageAndCycleCheck();
     validateDelta();
-    setUnit(parseUnit(match.params.unit, match.params.unitnumber));
-    setStoreCr(match.params.storecr);
-    setStore(match.params.store);
+    setUnit(parseUnit(unitParam, unitnumber));
+    setStoreCr(storecr);
+    setStore(storeParam);
     generalValidation();
-  }, [approved, readyToSend, delta]);
+  }, [approved, readyToSend, delta, unitParam, unitnumber, storecr, storeParam]);
 
   const handleInput = (e) => {
     setValues({
@@ -471,8 +474,8 @@ const OperationMain = ({ match, history }) => {
         <Navigation
           onMain={true}
           direction='workingEfficiency'
-          storecr={match.params.storecr}
-          store={match.params.store}
+          storecr={storecr}
+          store={storeParam}
         />
         <UserInfo />
       </div>

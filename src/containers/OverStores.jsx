@@ -4,12 +4,14 @@
 import React, { useEffect, useState } from 'react';
 import { gql, GraphQLClient } from 'graphql-request';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 import Navigation from './Navigation';
 import UserInfo from './UserInfo';
 import Title from '../components/Title';
 import '../assets/styles/components/Choices.scss';
 
-const OverStores = (props) => {
+const OverStores = () => {
+  const navigate = useNavigate();
   // console.log(match);
   const [stores, setStores] = useState([
     { id: '', nombre: 'Cargando tiendas' },
@@ -101,7 +103,7 @@ const OverStores = (props) => {
     } else {
       // console.log(selectedStore);
       e.preventDefault();
-      props.history.push(
+      navigate(
         // eslint-disable-next-line comma-dangle
         `/overheating/units/${selectedStoreCR}/${selectedStore}`
         // `/overheating/main/${match.params.refrigerant}/${match.params.unit}/${match.params.unitnumber}/${selectedStoreCR}/${selectedStore}`

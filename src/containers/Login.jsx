@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import 'firebase/auth';
-import { useHistory } from 'react-router-dom';
-import { useFirebaseApp } from 'reactfire';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'reactfire';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import swal from 'sweetalert2';
 import Header from '../components/Header';
 import '../assets/styles/components/Login.scss';
 
 const Login = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [form, setValues] = useState();
-  const firebase = useFirebaseApp();
+  const auth = useAuth();
 
   const cleanForm = () => {
     document.getElementById('email').value = '';
@@ -19,55 +19,33 @@ const Login = () => {
   const handleLogin = async (e) => {
     // console.log(btoa(utf8.encode(`${form.email}:${form.password}`)));
     e.preventDefault();
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(form.email, form.password)
-      .then((userCredentials) => {
-        // const { user } = userCredentials;
-        history.push('/');
-        // user.updateProfile({
-        //   displayName: 'Enrique Perez',
-        // });
-        // console.log('aqui esta el usuario', user);
-      })
-      .catch((err) => {
-        // console.log(err.code, err.message);
-        if (
-          err.code === 'auth/wrong-password' ||
-          err.code === 'auth/user-not-found)'
-        ) {
-          swal.fire({
-            icon: 'error',
-            title: 'Contraseña o usuario incorrectos',
-          });
-        } else {
-          swal.fire({
-            icon: 'error',
-            title: 'Por favor reporta el problema',
-          });
-        }
-      });
-    // login(form.email, form.password)
-    //   .then((r) => {
-    //     console.log(r);
-    //     if (r === 202) {
-    //       props.history.push('/');
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //     if (e === 401) {
-    //       swal.fire({
-    //         icon: 'error',
-    //         title: 'Contraseña o usuario incorrectos',
-    //       });
-    //     } else if (e === 500) {
-    //       swal.fire({
-    //         icon: 'error',
-    //         title: 'Hubo un error en la autenticación',
-    //       });
-    //     }
-    //   });
+    
+    try {
+      const userCredentials = await signInWithEmailAndPassword(auth, form.email, form.password);
+      // const { user } = userCredentials;
+      navigate('/');
+      // user.updateProfile({
+      //   displayName: 'Enrique Perez',
+      // });
+      // console.log('aqui esta el usuario', user);
+    } catch (err) {
+      // console.log(err.code, err.message);
+      if (
+        err.code === 'auth/wrong-password' ||
+        err.code === 'auth/user-not-found)'
+      ) {
+        swal.fire({
+          icon: 'error',
+          title: 'Contraseña o usuario incorrectos',
+        });
+      } else {
+        swal.fire({
+          icon: 'error',
+          title: 'Por favor reporta el problema',
+        });
+      }
+    }
+    
     cleanForm();
   };
 
